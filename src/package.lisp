@@ -3,7 +3,8 @@
 (defpackage #:icfpc
     (:use #:cl)
     (:export
-      #:run-all-tests)
+     #:run
+     #:run-all-tests)
   )
 
 ;; don't hide warnings
