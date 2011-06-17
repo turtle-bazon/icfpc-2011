@@ -46,6 +46,54 @@
     test-dbl-card-4
   (lift:ensure-error (dbl-card -1)))
 
+(lift:addtest
+    test-get-card-1
+  (setf (my-field 0) 1)
+  (setf (my-vitality 0) 10000)
+  (lift:ensure-same (get-card 0)
+		    1))
+
+(lift:addtest
+    test-get-card-2
+  (setf (my-field 0) #'i-card)
+  (setf (my-vitality 0) 10000)
+  (lift:ensure-same (get-card 0)
+		    #'i-card))
+
+(lift:addtest
+    test-get-card-3
+  (setf (my-field 0) 1)
+  (setf (my-vitality 0) 0)
+  (lift:ensure-error (get-card 0)))
+
+(lift:addtest
+    test-get-card-4
+  (setf (my-field 0) 1)
+  (setf (my-vitality 0) -1)
+  (lift:ensure-error (get-card 0)))
+
+(lift:addtest
+    test-get-card-5
+  (lift:ensure-error (get-card -1))
+  (lift:ensure-error (get-card 256)))
+
+(lift:addtest
+    test-put-card
+  (loop for i from 0 to 10
+       do (lift:ensure-same (put-card (random 65535))
+			    #'i-card)))
+
+(lift:addtest
+    test-s-card-1
+  (let* ((g-fun (s-card (random 65535)))
+	 (x-fun (funcall g-fun #'inc-card)))
+    (lift:ensure-error (funcall x-fun (random 65535)))))
+
+(lift:addtest
+    test-s-card-2
+  (let* ((g-fun (s-card #'inc-card))
+	 (x-fun (funcall g-fun (random 65535))))
+    (lift:ensure-error (funcall x-fun (random 65535)))))
 ;; 
 ;;; run-tests
 ;;;
