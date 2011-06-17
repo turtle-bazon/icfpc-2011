@@ -1,0 +1,4 @@
+#!/bin/sh
+rm skobochka*.tar.gz
+rm -rf build
+

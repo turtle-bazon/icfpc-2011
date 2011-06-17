@@ -1,0 +1,4 @@
+glob:
+build/*
+skobochka*.tar.gz
+

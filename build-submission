@@ -2,6 +2,11 @@
 
 # this script performs build submission file
 
-buildapp --output run --asdf-path ./src \
+./clean
+mkdir -p build
+buildapp --output build/run --asdf-path ./src \
 	 --load-system icfpc-2011 --entry "skobochka.icfpc-2011:run"
+cp install build/
+cp -R src/ build/
+tar -czf skobochka-`date +"%Y%m%d%H%M%S"`.tar.gz --directory build/ .
 
