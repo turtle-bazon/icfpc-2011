@@ -16,4 +16,9 @@
 	       (:file "game")
 	       (:file "cards")
 	       (:file "io")
-	       (:file "brains")))
+	       (:file "brains"))
+  :in-order-to ((test-op (test-op icfpc-tests)))
+  :perform (test-op :after (op c)
+                    (funcall
+                     (intern (symbol-name '#:run-all-tests)
+                             :icfpc))))
