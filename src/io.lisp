@@ -31,8 +31,16 @@
 	   (0 nil)
 	   (1 (read-opp-move s)))))
     (loop
-      (if (minusp counter) (return) (decf counter))
+      (if (or (minusp counter)
+	      (all-slots-dead-p *player1*)
+	      (all-slots-dead-p *player2*))
+	  (return) (decf counter))
       (let ((my-move (make-move prev-opp-move)))
 	(apply #'imitate-my-move my-move) ; think of a rollback here
 	(write-my-move s my-move))
-      (apply #'imitate-opp-move (setf prev-opp-move (read-opp-move s))))))
+      (apply #'imitate-opp-move (setf prev-opp-move (read-opp-move s))))
+    (let ((my-alive (slots-alive-num *player1*))
+	  (opp-alive (slots-alive-num *player2*)))
+      (cond ((> my-alive opp-alive) :win)
+	    ((< my-alive opp-alive) :lose)
+	    ((= my-alive opp-alive) :tie)))))

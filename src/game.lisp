@@ -91,3 +91,9 @@
   (let ((*player1* *player2*)
 	(*player2* *player1*))
     (imitate-my-move side card slot-no)))
+
+(defun slots-alive-num (player)
+  (count-if #'(lambda (s) (plusp (slot-vitality s))) (player-slots player)))
+
+(defun all-slots-dead-p (player)
+  (zerop (slots-alive-num player)))
