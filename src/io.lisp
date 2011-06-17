@@ -28,7 +28,7 @@
     (values)))
 
 (defun game-loop (player-id)
-  (let ((counter 10000)
+  (let ((counter 100000)
 	(prev-opp-move
 	 (ecase player-id
 	   (0 nil)
