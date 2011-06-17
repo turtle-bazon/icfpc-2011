@@ -20,6 +20,7 @@
 (defparameter *player1* (make-player))
 (defparameter *player2* (make-player))
 (defparameter *max-field* 65535)
+(defparameter *call-count* 0)
 
 (defun %get-field (slot-no player)
   (let ((val (slot-field (svref (player-slots player) slot-no))))
@@ -54,19 +55,12 @@
 (defun (setf my-vitality) (new slot-no) (%set-vitality slot-no *player1* new))
 (defun (setf opp-vitality) (new slot-no) (%set-vitality slot-no *player2* new))
 
-;; Внутриигровой кондишен.
-(define-condition card-condition () ())
-;; Закончились ходы.
-(define-condition rounds-limit () ())
-
-(defparameter *call-count* 0)
+(defun alive-p (slot-no) (nth-value 1 (my-vitality slot-no)))
 
 (defun card-call (card-fun arg)
   (incf *call-count*)
-  (when (<= 1000 *call-count*)
-    (signal 'rounds-limit))
-  (unless (typep card-fun 'function)
-    (signal 'card-condition))
+  (unless (> 1000 *call-count*) (normal-error))
+  (unless (functionp card-fun) (normal-error))
   (funcall card-fun arg))
 
 (defun left-apply (card slot-no)
@@ -75,10 +69,19 @@
 (defun right-apply (card slot-no)
   (card-call (my-field slot-no) card))
 
+(defmacro normal-error ()
+  `(throw :error nil))
+
 (defun imitate-move (side card slot-no)
-  (if (and (functionp card)
-	   (nth-value 1 (my-vitality slot-no)))
-      (ecase side
-	(:left  (left-apply card slot-no))
-	(:right (right-apply card slot-no)))
-      (signal 'card-condition)))
+  (let ((result
+	 (catch :error
+	   (setf *call-count* 0)
+	   (if (and (functionp card)
+		    (nth-value 1 (my-vitality slot-no)))
+	       (setf (my-field slot-no)
+		     (ecase side
+		       (:left  (left-apply card slot-no))
+		       (:right (right-apply card slot-no))))
+	       (normal-error)))))
+    (unless result (setf (my-vitality slot-no) #'identity))
+    result))
