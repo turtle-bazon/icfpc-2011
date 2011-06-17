@@ -14,4 +14,5 @@
   :serial t
   :components ((:file "package")
 	       (:file "game")
-	       (:file "cards")))
+	       (:file "cards")
+	       (:file "io")))
