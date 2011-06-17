@@ -8,5 +8,5 @@
   :description "Solution for ICFPC-2011"
   :depends-on (bordeaux-threads iterate cl-match)
   :components ((:file "package")
-	       (:file "run" (:depends-on ("package")))))
+	       (:file "run" :depends-on ("package"))))
 

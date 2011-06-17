@@ -2,3 +2,6 @@
 
 # this script performs build submission file
 
+buildapp --output run --asdf-path ./src \
+	 --load-system icfpc-2011 --entry "skobochka.icfpc-2011:run"
+
