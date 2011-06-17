@@ -48,5 +48,5 @@
 	    ((< my-alive opp-alive) :lose)
 	    ((= my-alive opp-alive) :tie)))))
 
-(defun run ()
-  (game-loop t (parse-integer (second sb-ext:*posix-argv*))))
+(defun run (argv)
+  (game-loop t (parse-integer (second argv))))
