@@ -29,7 +29,7 @@
 (defun put-card (x)
   "Возвращаяет тождественную функцию"
   (declare (ignore x))
-  #'identity)
+  #'i-card)
 
 (defun s-card (f)
   "S-кобминатор"
@@ -51,7 +51,7 @@
   (let ((v (my-vitality i)))
     (when (and (plusp v) (< v *max-field*))
       (incf (my-vitality i))))
-  #'identity)
+  #'i-card)
 
 (defun dec-card (i)
   "Ументшает значение здоровья i-го слота на 1, но результат не меньше 0"
@@ -59,7 +59,7 @@
   (let ((v (opp-vitality (- 255 i))))
     (when (plusp v)
       (decf (opp-vitality (- 255 i)))))
-  #'identity)
+  #'i-card)
 
 (defun attack-card (i)
   "Вычитает из здоровья i-го слота защищаегося n,
@@ -76,7 +76,7 @@
       (when (nth-value 1 (opp-vitality (- 255 j)))
 	(when (minusp (decf (opp-vitality (- 255 j)) (floor (* n 9/10))))
 	  (setf (opp-vitality (- 255 j)) 0)))
-      #'identity)))
+      #'i-card)))
 
 (defun help-card (i)
   "Вычитает из здоровья i-го слота защищаегося n,
@@ -93,7 +93,7 @@
       (when (plusp (my-vitality j))
 	(when (> (incf (my-vitality j) (floor (* n 11/10))) *max-field*)
 	  (setf (my-vitality j) *max-field*)))
-      #'identity)))
+      #'i-card)))
 
 (defun copy-card (i)
   "Возвращаяет значение field i-го слота защищающегося"
@@ -107,7 +107,7 @@
   (unless (typep i 'slot-no) (normal-error))
   (when (<= (my-vitality i) 0)
     (setf (my-vitality i) 1))
-  #'identity)
+  #'i-card)
 
 (defun zombie-card (i)
   "Если i-ый слот мёртв (здовье 0 или -1), устанавливает его здоровье в -1,
@@ -118,4 +118,4 @@
   (lambda (x)
     (setf (opp-field i) x
 	  (opp-vitality i) -1)
-    #'identity))
+    #'i-card))

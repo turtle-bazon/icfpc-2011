@@ -4,8 +4,11 @@
   (symbol-function (intern (concatenate 'string (string-upcase (string name)) "-CARD"))))
 
 (defun func->name (func)
-  (let ((str (string (nth-value 2 (function-lambda-expression func)))))
-    (string-downcase (subseq str 0 (position #\- str)))))
+  (let* ((str  (string (nth-value 2 (function-lambda-expression func))))
+	 (name (subseq str 0 (position #\- str))))
+    (if (= (length name) 1)
+	(string-upcase name)
+	(string-downcase name))))
 
 (defun read-opp-move (s)
   (let ((v1 (read s))

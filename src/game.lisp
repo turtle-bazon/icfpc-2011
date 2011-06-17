@@ -1,7 +1,7 @@
 (in-package :icfpc)
 
 (defstruct slot
-  (field #'identity)
+  (field #'i-card)
   (vitality 10000))
 
 (deftype slot-no ()
@@ -84,7 +84,7 @@
 		       (:right (right-apply card slot-no))))
 	       (normal-error)))))
     (or result
-	(progn (setf (my-field slot-no) #'identity)
+	(progn (setf (my-field slot-no) #'i-card)
 	       :error))))
 
 (defun imitate-opp-move (side card slot-no)
