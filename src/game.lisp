@@ -72,7 +72,7 @@
 (defmacro normal-error ()
   `(throw :error nil))
 
-(defun imitate-move (side card slot-no)
+(defun imitate-my-move (side card slot-no)
   (let ((result
 	 (catch :error
 	   (setf *call-count* 0)
@@ -86,3 +86,8 @@
     (or result
 	(progn (setf (my-field slot-no) #'identity)
 	       :error))))
+
+(defun imitate-opp-move (side card slot-no)
+  (let ((*player1* *player2*)
+	(*player2* *player1*))
+    (imitate-my-move side card slot-no)))

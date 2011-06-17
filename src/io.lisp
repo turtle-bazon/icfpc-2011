@@ -23,3 +23,16 @@
       (:left  (format s "~A~%~A~%~A~%" 1 (func->name v2) v3))
       (:right (format s "~A~%~A~%~A~%" 2 v3 (func->name v2))))
     (values)))
+
+(defun game-loop (s player-id)
+  (let ((counter 10000)
+	(prev-opp-move
+	 (ecase player-id
+	   (0 nil)
+	   (1 (read-opp-move s)))))
+    (loop
+      (if (minusp counter) (return) (decf counter))
+      (let ((my-move (make-move prev-opp-move)))
+	(apply #'imitate-my-move my-move) ; think of a rollback here
+	(write-my-move s my-move))
+      (apply #'imitate-opp-move (setf prev-opp-move (read-opp-move s))))))

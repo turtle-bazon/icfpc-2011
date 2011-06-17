@@ -15,4 +15,5 @@
   :components ((:file "package")
 	       (:file "game")
 	       (:file "cards")
-	       (:file "io")))
+	       (:file "io")
+	       (:file "brains")))
