@@ -109,12 +109,12 @@
 (lift:addtest
     test-k-card
   (loop for i from 1 to 10
-	for n = (random 65535)
-	do (let (y-fun (k-card n))
-	     (lift:ensure-same (funcall y-fun (random 65535))
-			       n)
-	     (lift:ensure-same (funcall y-fun #'i-card)
-			       n))))
+     for n = (random 65535)
+     do (let ((y-fun (k-card n)))
+	  (lift:ensure-same (funcall y-fun (random 65535))
+			    n)
+	  (lift:ensure-same (funcall y-fun #'i-card)
+			    n))))
 
 (lift:addtest
     test-inc-card-1
