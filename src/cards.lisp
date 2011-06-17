@@ -1,4 +1,4 @@
-(in-package :ltg)
+(in-package :icfpc-2011)
 
 (defparameter *start-vitality* 10000)
 
