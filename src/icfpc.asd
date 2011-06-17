@@ -13,8 +13,8 @@
   :depends-on ()
   :serial t
   :components ((:file "package")
-	       (:file "game")
 	       (:file "cards")
+	       (:file "game")
 	       (:file "io")
 	       (:file "brains"))
   :in-order-to ((test-op (test-op icfpc-tests)))
