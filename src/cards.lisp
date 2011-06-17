@@ -1,25 +1,4 @@
-(in-package :icfpc-2011)
-
-(deftype slot-no ()
-  '(integer 0 255))
-
-(deftype vitality ()
-  '(integer -1 65535))
-
-;; Внутриигровой кондишен.
-(define-condition card-condition () ())
-;; Закончились ходы.
-(define-condition rounds-limit () ())
-
-(defvar *call-count*)
-
-(defun card-call (card-fun arg)
-  (incf *call-count*)
-  (when (<= 1000 *call-count*)
-    (signal 'rounds-limit))
-  (unless (typep card-fun 'function)
-    (signal 'card-condition))
-  (funcall card-fun arg))
+(in-package :icfpc)
 
 (defun i-card (x)
   "Тождественная функция возвращает аргумент"
@@ -90,8 +69,8 @@
 возвращает тождественную фукнцию"
   (lambda (j)
     (lambda (n)
-      (unless (and (typep i 'legal-slot-no)
-		   (typep j 'legal-slot-no)
+      (unless (and (typep i 'slot-no)
+		   (typep j 'slot-no)
 		   (or (not (integerp n))
 		       (> n (my-vitality i))))
 	(signal 'card-condtion))
@@ -107,8 +86,8 @@
 возвращает тождественную фукнцию"
   (lambda (j)
     (lambda (n)
-      (unless (and (typep i 'legal-slot-no)
-		   (typep j 'legal-slot-no)
+      (unless (and (typep i 'slot-no)
+		   (typep j 'slot-no)
 		   (or (not (integerp n))
 		       (> n (my-vitality i))))
 	(signal 'card-condtion))

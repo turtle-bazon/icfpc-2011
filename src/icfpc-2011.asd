@@ -1,18 +1,17 @@
 ;;;; -*- mode: lisp -*-
-(defpackage #:icfpc-2011-system
+(defpackage #:icfpc-system
   (:use #:cl #:asdf))
 
-(in-package #:icfpc-2011-system)
+(in-package #:icfpc-system)
 
-(defsystem :icfpc-2011
-  :name "icfpc-2011"
+(defsystem :icfpc
+  :name "icfpc"
   :author "Skobochka"
   :licence "Lessor Lisp General Public License"
   :version "0.1"
   :description "Solution for ICFPC-2011"
-  :depends-on (#:bordeaux-threads #:iterate #:cl-match)
+  :depends-on ()
   :serial t
   :components ((:file "package")
-	       (:file "cards")
-	       (:file "run")))
-
+	       (:file "game")
+	       (:file "cards")))
