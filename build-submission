@@ -6,6 +6,7 @@
 mkdir -p build
 `which buildapp` --output build/run --asdf-path ./src/ \
     --load-system icfpc --entry "icfpc:run"
+gzexe build/run
 cp install build/
 cp -R src/ build/
 tar -czf skobochka-`date +"%Y%m%d%H%M%S"`.tar.gz --directory build/ .

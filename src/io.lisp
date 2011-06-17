@@ -1,7 +1,7 @@
 (in-package :icfpc)
 
 (defun name->func (name)
-  (symbol-function (intern (concatenate 'string (string-upcase (string name)) "-CARD"))))
+  (symbol-function (intern (concatenate 'string (string-upcase (string name)) "-CARD") :icfpc)))
 
 (defun func->name (func)
   (let* ((str  (string (nth-value 2 (function-lambda-expression func))))
