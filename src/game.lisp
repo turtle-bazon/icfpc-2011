@@ -83,5 +83,6 @@
 		       (:left  (left-apply card slot-no))
 		       (:right (right-apply card slot-no))))
 	       (normal-error)))))
-    (unless result (setf (my-vitality slot-no) #'identity))
-    result))
+    (or result
+	(progn (setf (my-field slot-no) #'identity)
+	       :error))))
