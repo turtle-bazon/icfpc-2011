@@ -1,40 +1,48 @@
 (in-package :icfpc-2011)
 
-(defparameter *start-vitality* 10000)
+(deftype slot-no ()
+  '(integer 0 255))
 
-(defstruct slot
-  (field #'identity)
-  (vitality *start-vitality*))
-  
+(deftype vitality ()
+  '(integer -1 65535))
 
-(defparameter *n-slots* 256)
-(defparameter *proponent-slots* (make-array *n-slots*))
-(defparameter *opponent-slots* (make-array *n-slots*))
-(defparameter *max-field* 65535)
+;; Внутриигровой кондишен.
+(define-condition card-condition () ())
+;; Закончились ходы.
+(define-condition rounds-limit () ())
+
+(defvar *call-count*)
+
+(defun card-call (card-fun arg)
+  (incf *call-count*)
+  (when (<= 1000 *call-count*)
+    (signal 'rounds-limit))
+  (unless (typep card-fun 'function)
+    (signal 'card-condition))
+  (funcall card-fun arg))
 
 (defun i-card (x)
   x)
 
-(defun zero-card (x)
+(defmethod apply-card (x)
   (declare (ignore x))
   0)
 
 (defun succ-card (n)
-  (assert (typep n 'integer))
-  (if (= n *max-field*)
-      n
-      (1+ n)))
+  (unless (typep n 'vitality)
+    (signal 'card-condition))
+  (if (= n *max-field*) n (1+ n)))
 
 (defun dbl-card (n)
+  (unless (typep n 'vitality)
+    (signal 'card-condition))
   (min *max-field* (* 2 n)))
 
-(defun alive-p (slot)
-  (plusp (slot-vitality slot)))
-
 (defun get-card (i)
-  (let ((slot (aref *proponent-slots* i)))
-    (assert (alive-p slot))
-    (slot-field slot)))
+  (unless (and (typep i 'slot-no)
+	       (nth-value 1 (get-vitality i)))
+    (signal 'card-condtion))
+  (my-field i))
 
 (defun put-card (x)
   (declare (ignore x))
@@ -43,9 +51,9 @@
 (defun s-card (f)
   (lambda (g)
     (lambda (x)
-      (let ((h (funcall f x))
-	    (y (funcall g x)))
-	(funcall h y)))))
+      (let ((h (card-call f x))
+	    (y (card-call g x)))
+	(card-call h y)))))
 
 (defun k-card (x)
   (lambda (y)
@@ -53,27 +61,30 @@
     x))
 
 (defun inc-card (i)
-  (let ((v (slot-vitality (aref *proponent-slots* i))))
+  (unless (typep i 'slot-no)
+    (signal 'card-condtion))
+  (let ((v (my-vitality i)))
     (when (and (plusp v) (< v *max-field*))
-      (incf (slot-vitality (aref *proponent-slots* i))))))
+      (incf (my-vitality i)))))
 
 (defun dec-card (i)
-  (when (plusp (aref *opponent-slots* (- 255 i)))
-    (decf (aref *opponent-slots* (- 255 i)))))
+  (unless (typep i 'slot-no)
+    (signal 'card-condtion))
+  (let ((v (opp-vitality (- 255 i))))
+    (when (plusp v)
+      (decf (opp-vitality (- 255 i))))))
 
-(defun decf-vitality (slot delta &optional set-to-0-if-neg)
-  (let ((new-vitality (- (slot-vitality slot) delta)))
-    (when (and (not set-to-0-if-neg) (minusp new-vitality))
-      (error "Negative vitality after decrease."))
-    (setf (slot-vitality slot) (if set-to-0-if-neg
-				   (max 0 new-vitality)
-				   new-vitality))))
-
+#+nil
 (defun attack-card (i)
   (lambda (j)
     (lambda (n)
-      (decf-vitality (aref *proponent-slots* i) n)
-      (when (alive-p (aref *opponent-slots* (- 255 j)))
-	(decf-vitality (aref *opponent-slots* (- 255 j))
-		       (floor (* n 9/10)) t))
+      (unless (and (typep i 'legal-slot-no)
+		   (typep j 'legal-slot-no)
+		   (or (not (integerp n))
+		       (> n (my-vitality i))))
+	(signal card-condtion))
+      (decf (my-vitality slot-no) n)
+      (when (nth-value 1 (opp-vitality (- 255 j)))
+	(when (minusp (decf (opp-vitality (- 255 j)) (floor (* n 9/10))))
+	  (setf (opp-vitality (- 255 j)) 0)))
       #'identity)))
