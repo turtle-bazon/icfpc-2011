@@ -172,17 +172,17 @@
 
 (lift:addtest
     test-attack-card-1
-  (loop for i from 0 to 255
-     do (loop for j from 0 to 255
-	   do (let* ((j-fun (attack-card i))
-		     (n-fun (funcall j-fun j)))
-		(setf (my-vitality i) 89)
-		(setf (opp-vitality (- 255 j)) 99)
-		(funcall n-fun 10)
-		(lift:ensure-same (my-vitality i)
-				  79)
-		(lift:ensure-same (opp-vitality (- 255 j))
-				  90)))))
+  (let ((i (random 255))
+	(j (random 255)))
+    (let* ((j-fun (attack-card i))
+	   (n-fun (funcall j-fun j)))
+      (setf (my-vitality i) 89)
+      (setf (opp-vitality (- 255 j)) 99)
+      (lift:ensure-same (funcall n-fun 10) #'i-card)
+      (lift:ensure-same (my-vitality i)
+			79)
+      (lift:ensure-same (opp-vitality (- 255 j))
+			90))))
 
 (lift:addtest
     test-attack-card-2
@@ -226,26 +226,100 @@
 
 (lift:addtest
     test-attack-card-7
-  (loop for i from 0 to 255
-     do (loop for j from 0 to 255
-	   do (let* ((j-fun (attack-card i))
-		     (n-fun (funcall j-fun j)))
-		(setf (my-vitality i) 9)
-		(lift:ensure-error (funcall n-fun 10))))))
+  (let ((i (random 255))
+	(j (random 255)))
+    (let* ((j-fun (attack-card i))
+	   (n-fun (funcall j-fun j)))
+      (setf (my-vitality i) 9)
+      (lift:ensure-error (funcall n-fun 10)))))
 
 (lift:addtest
-    test-attack-card-7
-  (loop for i from 0 to 255
-     do (loop for j from 0 to 255
-	   do (let* ((j-fun (attack-card i))
-		     (n-fun (funcall j-fun j)))
-		(setf (my-vitality i) 89)
-		(setf (opp-vitality (- 255 j)) 99)
-		(funcall n-fun 10)
-		(lift:ensure-same (my-vitality i)
-				  89)
-		(lift:ensure-same (opp-vitality (- 255 j))
-				  99)))))
+    test-attack-card-8
+  (let ((i (random 255))
+	(j (random 255)))
+    (let* ((j-fun (attack-card i))
+	   (n-fun (funcall j-fun j)))
+      (setf (my-vitality i) 0)
+      (setf (opp-vitality (- 255 j)) 99)
+      (lift:ensure-same (funcall n-fun 10) #'i-card)
+      (lift:ensure-same (my-vitality i)
+			0)
+      (lift:ensure-same (opp-vitality (- 255 j))
+			99))))
+
+(lift:addtest
+    test-attack-card-9
+  (let ((i (random 255))
+	(j (random 255)))
+    (let* ((j-fun (attack-card i))
+	   (n-fun (funcall j-fun j)))
+      (setf (my-vitality i) -1)
+      (setf (opp-vitality (- 255 j)) 99)
+      (lift:ensure-same (funcall n-fun 10) #'i-card)
+      (lift:ensure-same (my-vitality i)
+			-1)
+      (lift:ensure-same (opp-vitality (- 255 j))
+			99))))
+
+(lift:addtest
+    test-attack-card-10
+  (let ((i (random 255))
+	(j (random 255)))
+    (let* ((j-fun (attack-card i))
+	   (n-fun (funcall j-fun j)))
+      (setf (my-vitality i) 99)
+      (setf (opp-vitality (- 255 j)) 9)
+      (lift:ensure-same (funcall n-fun 10) #'i-card)
+      (lift:ensure-same (my-vitality i)
+			89)
+      (lift:ensure-same (opp-vitality (- 255 j))
+			0))))
+
+(lift:addtest
+    test-help-card-1
+  (let* ((i -1)
+	 (j -1)
+	 (j-fun (help-card i))
+	 (n-fun (funcall j-fun j)))
+    (lift:ensure-error (funcall n-fun (random 255)))))
+
+(lift:addtest
+    test-help-card-2
+  (let* ((i -1)
+	 (j 256)
+	 (j-fun (help-card i))
+	 (n-fun (funcall j-fun j)))
+    (lift:ensure-error (funcall n-fun (random 255)))))
+
+(lift:addtest
+    test-help-card-3
+  (let* ((i 256)
+	 (j -1)
+	 (j-fun (help-card i))
+	 (n-fun (funcall j-fun j)))
+    (lift:ensure-error (funcall n-fun (random 255)))))
+
+(lift:addtest
+    test-help-card-4
+  (let* ((i 256)
+	 (j 256)
+	 (j-fun (help-card i))
+	 (n-fun (funcall j-fun j)))
+    (lift:ensure-error (funcall n-fun (random 255)))))
+
+(lift:addtest
+    test-help-card-5
+  (let ((i (random 255))
+	(j (random 255)))
+    (let* ((j-fun (attack-card i))
+	   (n-fun (funcall j-fun j)))
+      (setf (my-vitality i) 100)
+      (setf (my-vitality j) 110)
+      (funcall n-fun 10)
+      (lift:ensure-same (my-vitality i)
+			90)
+      (lift:ensure-same (my-vitality j)
+			121))))
 
 ;; 
 ;;; run-tests
