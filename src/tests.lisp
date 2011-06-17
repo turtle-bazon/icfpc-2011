@@ -46,6 +46,177 @@
     test-dbl-card-4
   (lift:ensure-error (dbl-card -1)))
 
+(lift:addtest
+    test-get-card-1
+  (let ((slot (random 255)))
+    (setf (my-field slot) 1)
+    (setf (my-vitality slot) 10000)
+    (lift:ensure-same (get-card slot)
+		      1)))
+
+(lift:addtest
+    test-get-card-2
+  (let ((slot (random 255)))
+    (setf (my-field slot) #'i-card)
+    (setf (my-vitality slot) 10000)
+    (lift:ensure-same (get-card slot)
+		      #'i-card)))
+
+(lift:addtest
+    test-get-card-3
+  (let ((slot (random 255)))
+    (setf (my-field slot) 1)
+    (setf (my-vitality slot) 0)
+    (lift:ensure-error (get-card slot))))
+
+(lift:addtest
+    test-get-card-4
+  (let ((slot (random 255)))
+    (setf (my-field slot) 1)
+    (setf (my-vitality slot) -1)
+    (lift:ensure-error (get-card slot))))
+
+(lift:addtest
+    test-get-card-5
+  (lift:ensure-error (get-card -1))
+  (lift:ensure-error (get-card 256)))
+
+(lift:addtest
+    test-put-card
+  (loop for i from 0 to 10
+       do (lift:ensure-same (put-card (random 65535))
+			    #'i-card)))
+
+(lift:addtest
+    test-s-card-1
+  (let* ((g-fun (s-card (random 65535)))
+	 (x-fun (funcall g-fun #'inc-card)))
+    (lift:ensure-error (funcall x-fun (random 65535)))))
+
+(lift:addtest
+    test-s-card-2
+  (let* ((g-fun (s-card #'i-card))
+	 (x-fun (funcall g-fun (random 65535))))
+    (lift:ensure-error (funcall x-fun (random 65535)))))
+
+(lift:addtest
+    test-s-card-3
+  (let* ((g-fun (s-card #'i-card))
+	 (x-fun (funcall g-fun #'i-card)))
+    (lift:ensure-error (funcall x-fun (random 65535)))
+    (lift:ensure-no-warning (funcall x-fun #'i-card))))
+
+(lift:addtest
+    test-k-card
+  (loop for i from 1 to 10
+     for n = (random 65535)
+     do (let ((y-fun (k-card n)))
+	  (lift:ensure-same (funcall y-fun (random 65535))
+			    n)
+	  (lift:ensure-same (funcall y-fun #'i-card)
+			    n))))
+
+(lift:addtest
+    test-inc-card-1
+  (loop for v from 1 to 65534
+     for slot = (random 255)
+     do (progn
+	  (setf (my-vitality slot) v)
+	  (lift:ensure-same (inc-card slot) #'i-card)
+	  (lift:ensure-same (my-vitality slot)
+			    (+ v 1)))))
+
+(lift:addtest
+    test-inc-card-2
+  (let ((slot (random 255)))
+    (setf (my-vitality slot) 0)
+    (lift:ensure-same (inc-card slot) #'i-card)
+    (lift:ensure-same (my-vitality slot)
+		      0)
+    (setf (my-vitality slot) 65535)
+    (lift:ensure-same (inc-card slot) #'i-card)
+    (lift:ensure-same (my-vitality slot)
+		      65535)))
+
+(lift:addtest
+    test-inc-card-3
+  (lift:ensure-error (inc-card -1))
+  (lift:ensure-error (inc-card 256)))
+
+(lift:addtest
+    test-dec-card-1
+  (loop for v from 1 to 65535
+     for slot = (random 255)
+     do (progn
+	  (setf (opp-vitality slot) v)
+	  (lift:ensure-same (dec-card slot) #'i-card)
+	  (lift:ensure-same (opp-vitality slot)
+			    (- v 1)))))
+
+(lift:addtest
+    test-dec-card-2
+  (let ((slot (random 255)))
+    (setf (opp-vitality slot) 0)
+    (lift:ensure-same (dec-card slot) #'i-card)
+    (lift:ensure-same (opp-vitality slot)
+		      0)
+    (setf (my-vitality slot) -1)
+    (lift:ensure-same (dec-card slot) #'i-card)
+    (lift:ensure-same (opp-vitality slot)
+		      -1)))
+
+(lift:addtest
+    test-dec-card-3
+  (lift:ensure-error (dec-card -1))
+  (lift:ensure-error (dec-card 256)))
+
+(lift:addtest
+    test-attack-card-1
+  (loop for i from 0 to 255
+     do (let ((j-fun (attack-card i)))
+	  (loop for j from 0 to 255
+	     for n-fun = (funcall j-fun j)
+	     do (progn
+		  (setf (my-vitality i) 99)
+		  (setf (opp-vitality (- 255 j)) 99)
+		  (funcall n-fun 10)
+		  (lift:ensure-same (my-vitality i)
+				    89)
+		  (lift:ensure-same (opp-vitality (- 255 j))
+				    90))))))
+
+(lift:addtest
+    test-attack-card-2
+  (let* ((i -1)
+	 (j -1)
+	 (j-fun (attack-card i))
+	 (n-fun (funcall j-fun j)))
+    (lift:ensure-error (funcall n-fun (random 255)))))
+
+(lift:addtest
+    test-attack-card-3
+  (let* ((i -1)
+	 (j 256)
+	 (j-fun (attack-card i))
+	 (n-fun (funcall j-fun j)))
+    (lift:ensure-error (funcall n-fun (random 255)))))
+
+(lift:addtest
+    test-attack-card-4
+  (let* ((i 256)
+	 (j -1)
+	 (j-fun (attack-card i))
+	 (n-fun (funcall j-fun j)))
+    (lift:ensure-error (funcall n-fun (random 255)))))
+
+(lift:addtest
+    test-attack-card-5
+  (let* ((i 256)
+	 (j 256)
+	 (j-fun (attack-card i))
+	 (n-fun (funcall j-fun j)))
+    (lift:ensure-error (funcall n-fun (random 255)))))
+
 ;; 
 ;;; run-tests
 ;;;

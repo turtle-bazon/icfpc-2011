@@ -8,7 +8,7 @@
   '(integer 0 255))
 
 (deftype field ()
-  '(or integer function))
+  '(or (integer 0 65535) function))
 
 (deftype vitality ()
   '(integer -1 65535))
