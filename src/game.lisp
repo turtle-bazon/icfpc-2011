@@ -57,6 +57,9 @@
 
 (defun alive-p (slot-no) (nth-value 1 (my-vitality slot-no)))
 
+(defun zero-card (x) (declare (ignore x))
+  (error "zero-card was called somehow %)"))
+
 (defun card-function-p (card)
   (and (not (eq card #'zero-card))
        (functionp card)))
