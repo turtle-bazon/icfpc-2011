@@ -1,26 +1,6 @@
 (in-package :icfpc)
 
-;; (defun make-attack-queue-0-0-1 (my-fn)
-;;   "Attacks 0-th slot using our 0-th with attack value 1 (attack 0 0 1)"
-;;   (let ((my (delay (funcall my-fn))))
-;;     `((:right #'attack-card ,my)     ; 2 0 attack
-;;       (:right #'zero-card   ,my)     ; 2 0 zero
-;;       (:right #'zero-card   ,my)     ; 2 0 zero
-;;       (:left  #'K-card      ,my)     ; 1 K 0
-;;       (:left  #'S-card      ,my)     ; 1 S 0
-;;       (:right #'succ-card   ,my)     ; 2 0 succ
-;;       (:right #'zero-card   ,my))))  ; 2 0 zero
-
-;; (defun make-attack-queue (storage)
-;;   "Attacks 0-th slot using our 0-th slot with attack value given in 0-th slot"
-;;   (list (:right #'attack-card storage)	 ; 2 x attack
-;; 	(:right #'zero-card   storage)	 ; 2 x zero
-;; 	(:right #'zero-card   storage)	 ; 2 x zero
-;; 	(:left  #'K-card      storage)	 ; 1 K x
-;; 	(:left  #'S-card      storage)	 ; 1 S x
-;; 	(:right #'get-card    storage)	 ; 2 x succ
-;; 	(:right #'zero-card   storage))) ; 2 x zero
-
+;; TODO: rewrite, use dbl and binary (4 = dbl(dbl(1)), not succ(succ(succ(1))) )
 (defun write-number (slot n)
   "Writes n to slot"
   (append `((:left  #'put-card  ,slot)
@@ -57,6 +37,7 @@
 	  (write-number 0 n)
 	  (b-combinator storage #'get-card #'zero-card)))
 
+;; has to be tested
 (defun y-combinator (storage slot-f)
   "Y f = f (Y f)
    Y = S S K (S (K (S S (S (S S K)))) K)"
@@ -81,6 +62,7 @@
 	  (write-number 0 slot-f)
 	  (b-combinator 2 #'get-card #'zero-card)))
 
+;; has to be tested
 (defun w-combinator (storage slot-x slot-y)
   "W x y = x y y
    W = S S (K (S K K))"
