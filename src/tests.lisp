@@ -242,13 +242,13 @@
 	(j (random 255)))
     (let* ((j-fun (attack-card i))
 	   (n-fun (funcall j-fun j)))
-      (setf (my-vitality i) 0)
-      (setf (opp-vitality (- 255 j)) 99)
+      (setf (my-vitality i) 100)
+      (setf (opp-vitality (- 255 j)) 0)
       (lift:ensure-same (funcall n-fun 10) #'i-card)
       (lift:ensure-same (my-vitality i)
-			0)
+			90)
       (lift:ensure-same (opp-vitality (- 255 j))
-			99))))
+			0))))
 
 (lift:addtest
     test-attack-card-9
@@ -256,13 +256,13 @@
 	(j (random 255)))
     (let* ((j-fun (attack-card i))
 	   (n-fun (funcall j-fun j)))
-      (setf (my-vitality i) -1)
-      (setf (opp-vitality (- 255 j)) 99)
+      (setf (my-vitality i) 100)
+      (setf (opp-vitality (- 255 j)) -1)
       (lift:ensure-same (funcall n-fun 10) #'i-card)
       (lift:ensure-same (my-vitality i)
-			-1)
+			90)
       (lift:ensure-same (opp-vitality (- 255 j))
-			99))))
+			-1))))
 
 (lift:addtest
     test-attack-card-10
