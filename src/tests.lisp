@@ -190,7 +190,7 @@
 (lift:addtest
     test-attack-card-2
   (let* ((i -1)
-	 (j (randrom 255))
+	 (j (random 255))
 	 (j-fun (attack-card i))
 	 (n-fun (funcall j-fun j)))
     (lift:ensure-condition normal-error (funcall n-fun (random 255)))))
