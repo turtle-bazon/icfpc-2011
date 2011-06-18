@@ -69,20 +69,23 @@
 (defun right-apply (card slot-no)
   (card-call (my-field slot-no) card))
 
+(define-condition normal-error () ())
+
 (defmacro normal-error ()
-  `(throw :error nil))
+  `(signal 'normal-error))
 
 (defun imitate-my-move (side card slot-no)
   (let ((result
-	 (catch :error
-	   (setf *call-count* 0)
-	   (if (and (functionp card)
-		    (nth-value 1 (my-vitality slot-no)))
-	       (setf (my-field slot-no)
-		     (ecase side
-		       (:left  (left-apply card slot-no))
-		       (:right (right-apply card slot-no))))
-	       (normal-error)))))
+	 (with-simple-restart (normal-error-restart "")
+	   (handler-bind ((normal-error (lambda (c) (declare (ignore c)) (invoke-restart 'normal-error-restart))))
+	     (setf *call-count* 0)
+	     (if (and (functionp card)
+		      (nth-value 1 (my-vitality slot-no)))
+		 (setf (my-field slot-no)
+		       (ecase side
+			 (:left  (left-apply card slot-no))
+			 (:right (right-apply card slot-no))))
+		 (normal-error))))))
     (or result
 	(progn (setf (my-field slot-no) #'i-card)
 	       :error))))
