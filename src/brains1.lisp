@@ -81,6 +81,7 @@
 	  (write-number 0 slot-y)
 	  (b-combinator 1 #'get-card #'zero-card)))
 
+;; doesn't work, has to be rewritten
 (defun infinite-attack (storage i j n)
   "Y (attack i j n)"
   (append (attack-queue 2 i j n)
