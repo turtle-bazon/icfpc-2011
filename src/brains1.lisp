@@ -29,11 +29,11 @@
 	     collect `(:left #'succ-card ,slot))))
 
 (defun b-combinator (storage b c)
-  "B combinator: Babc = S(Ka)bc = a(bc), where b=get and c=zero"
+  "B combinator: Babc = S(Ka)bc = a(bc)"
   `((:left  #'k-card    ,storage)
     (:left  #'s-card    ,storage)
-    (:right b           ,storage)
-    (:right c           ,storage)))
+    (:right ,b          ,storage)
+    (:right ,c          ,storage)))
 
 (defun attack-queue (storage i j n)
   "Function is written to storage; it attacks j-th opponent's slot using i-th our with given value n"
