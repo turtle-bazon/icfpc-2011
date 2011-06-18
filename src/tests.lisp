@@ -44,7 +44,7 @@
 
 (lift:addtest
     test-dbl-card-4
-  (lift:ensure-error (dbl-card #'i-card)))
+  (lift:ensure-condition normal-error (dbl-card #'i-card)))
 
 (lift:addtest
     test-get-card-1
@@ -67,19 +67,19 @@
   (let ((slot (random 255)))
     (setf (my-field slot) 1)
     (setf (my-vitality slot) 0)
-    (lift:ensure-error (get-card slot))))
+    (lift:ensure-condition normal-error (get-card slot))))
 
 (lift:addtest
     test-get-card-4
   (let ((slot (random 255)))
     (setf (my-field slot) 1)
     (setf (my-vitality slot) -1)
-    (lift:ensure-error (get-card slot))))
+    (lift:ensure-condition normal-error (get-card slot))))
 
 (lift:addtest
     test-get-card-5
-  (lift:ensure-error (get-card -1))
-  (lift:ensure-error (get-card 256)))
+  (lift:ensure-condition normal-error (get-card -1))
+  (lift:ensure-condition normal-error (get-card 256)))
 
 (lift:addtest
     test-put-card
@@ -91,19 +91,19 @@
     test-s-card-1
   (let* ((g-fun (s-card (random 65535)))
 	 (x-fun (funcall g-fun #'inc-card)))
-    (lift:ensure-error (funcall x-fun (random 65535)))))
+    (lift:ensure-condition normal-error (funcall x-fun (random 65535)))))
 
 (lift:addtest
     test-s-card-2
   (let* ((g-fun (s-card #'i-card))
 	 (x-fun (funcall g-fun (random 65535))))
-    (lift:ensure-error (funcall x-fun (random 65535)))))
+    (lift:ensure-condition normal-error (funcall x-fun (random 65535)))))
 
 (lift:addtest
     test-s-card-3
   (let* ((g-fun (s-card #'i-card))
 	 (x-fun (funcall g-fun #'i-card)))
-    (lift:ensure-error (funcall x-fun (random 65535)))
+    (lift:ensure-condition normal-error (funcall x-fun (random 65535)))
     (lift:ensure-no-warning (funcall x-fun #'i-card))))
 
 (lift:addtest
@@ -140,8 +140,8 @@
 
 (lift:addtest
     test-inc-card-3
-  (lift:ensure-error (inc-card -1))
-  (lift:ensure-error (inc-card 256)))
+  (lift:ensure-condition normal-error (inc-card -1))
+  (lift:ensure-condition normal-error (inc-card 256)))
 
 (lift:addtest
     test-dec-card-1
@@ -170,8 +170,8 @@
 
 (lift:addtest
     test-dec-card-3
-  (lift:ensure-error (dec-card -1))
-  (lift:ensure-error (dec-card 256)))
+  (lift:ensure-condition normal-error (dec-card -1))
+  (lift:ensure-condition normal-error (dec-card 256)))
 
 (lift:addtest
     test-attack-card-1
@@ -193,7 +193,7 @@
 	 (j -1)
 	 (j-fun (attack-card i))
 	 (n-fun (funcall j-fun j)))
-    (lift:ensure-error (funcall n-fun (random 255)))))
+    (lift:ensure-condition normal-error (funcall n-fun (random 255)))))
 
 (lift:addtest
     test-attack-card-3
@@ -201,7 +201,7 @@
 	 (j 256)
 	 (j-fun (attack-card i))
 	 (n-fun (funcall j-fun j)))
-    (lift:ensure-error (funcall n-fun (random 255)))))
+    (lift:ensure-condition normal-error (funcall n-fun (random 255)))))
 
 (lift:addtest
     test-attack-card-4
@@ -209,7 +209,7 @@
 	 (j -1)
 	 (j-fun (attack-card i))
 	 (n-fun (funcall j-fun j)))
-    (lift:ensure-error (funcall n-fun (random 255)))))
+    (lift:ensure-condition normal-error (funcall n-fun (random 255)))))
 
 (lift:addtest
     test-attack-card-5
@@ -217,7 +217,7 @@
 	 (j 256)
 	 (j-fun (attack-card i))
 	 (n-fun (funcall j-fun j)))
-    (lift:ensure-error (funcall n-fun (random 255)))))
+    (lift:ensure-condition normal-error (funcall n-fun (random 255)))))
 
 (lift:addtest
     test-attack-card-6
@@ -225,7 +225,7 @@
      do (loop for j from 0 to 255
 	   do (let* ((j-fun (attack-card i))
 		     (n-fun (funcall j-fun j)))
-		(lift:ensure-error (funcall n-fun #'i-card))))))
+		(lift:ensure-condition normal-error (funcall n-fun #'i-card))))))
 
 (lift:addtest
     test-attack-card-7
@@ -234,7 +234,7 @@
     (let* ((j-fun (attack-card i))
 	   (n-fun (funcall j-fun j)))
       (setf (my-vitality i) 9)
-      (lift:ensure-error (funcall n-fun 10)))))
+      (lift:ensure-condition normal-error (funcall n-fun 10)))))
 
 (lift:addtest
     test-attack-card-8
@@ -284,7 +284,7 @@
 	 (j -1)
 	 (j-fun (help-card i))
 	 (n-fun (funcall j-fun j)))
-    (lift:ensure-error (funcall n-fun (random 255)))))
+    (lift:ensure-condition normal-error (funcall n-fun (random 255)))))
 
 (lift:addtest
     test-help-card-2
@@ -292,7 +292,7 @@
 	 (j 256)
 	 (j-fun (help-card i))
 	 (n-fun (funcall j-fun j)))
-    (lift:ensure-error (funcall n-fun (random 255)))))
+    (lift:ensure-condition normal-error (funcall n-fun (random 255)))))
 
 (lift:addtest
     test-help-card-3
@@ -300,7 +300,7 @@
 	 (j -1)
 	 (j-fun (help-card i))
 	 (n-fun (funcall j-fun j)))
-    (lift:ensure-error (funcall n-fun (random 255)))))
+    (lift:ensure-condition normal-error (funcall n-fun (random 255)))))
 
 (lift:addtest
     test-help-card-4
@@ -308,7 +308,7 @@
 	 (j 256)
 	 (j-fun (help-card i))
 	 (n-fun (funcall j-fun j)))
-    (lift:ensure-error (funcall n-fun (random 255)))))
+    (lift:ensure-condition normal-error (funcall n-fun (random 255)))))
 
 (lift:addtest
     test-help-card-5
@@ -331,8 +331,8 @@
     (let* ((j-fun (attack-card i))
 	   (n-fun (funcall j-fun j)))
       (setf (my-vitality i) 200)
-      (lift:ensure-error (funcall n-fun 210))
-      (lift:ensure-error (funcall n-fun :QWERTY)))))
+      (lift:ensure-condition normal-error (funcall n-fun 210))
+      (lift:ensure-condition normal-error (funcall n-fun :QWERTY)))))
 
 (lift:addtest
     test-help-card-7
@@ -390,8 +390,8 @@
 
 (lift:addtest
     test-copy-card-2
-  (lift:ensure-error (copy-card -1))
-  (lift:ensure-error (copy-card 256)))
+  (lift:ensure-condition normal-error (copy-card -1))
+  (lift:ensure-condition normal-error (copy-card 256)))
 
 (lift:addtest
     test-revive-card-1
@@ -415,8 +415,8 @@
 
 (lift:addtest
     test-revive-card-3
-  (lift:ensure-error (revive-card -1))
-  (lift:ensure-error (revive-card 256)))
+  (lift:ensure-condition normal-error (revive-card -1))
+  (lift:ensure-condition normal-error (revive-card 256)))
 
 (lift:addtest
     test-zombie-card-1
@@ -459,8 +459,8 @@
 	 (v1 (random 65535))
 	 (v2 #'dbl-card))
     (setf (opp-vitality i) 10)
-    (lift:ensure-error (funcall x-fun v1))
-    (lift:ensure-error (funcall x-fun v2))))
+    (lift:ensure-condition normal-error (funcall x-fun v1))
+    (lift:ensure-condition normal-error (funcall x-fun v2))))
 
 (lift:addtest
     test-zombie-card-3
@@ -469,8 +469,8 @@
 	 (v1 (random 65535))
 	 (v2 #'dbl-card))
     (setf (opp-vitality i) 0)
-    (lift:ensure-error (funcall x-fun v1))
-    (lift:ensure-error (funcall x-fun v2))))
+    (lift:ensure-condition normal-error (funcall x-fun v1))
+    (lift:ensure-condition normal-error (funcall x-fun v2))))
 
 (lift:addtest
     test-zombie-card-4
@@ -479,8 +479,8 @@
 	 (v1 (random 65535))
 	 (v2 #'dbl-card))
     (setf (opp-vitality i) 0)
-    (lift:ensure-error (funcall x-fun v1))
-    (lift:ensure-error (funcall x-fun v2))))
+    (lift:ensure-condition normal-error (funcall x-fun v1))
+    (lift:ensure-condition normal-error (funcall x-fun v2))))
 
 ;; 
 ;;; run-tests
