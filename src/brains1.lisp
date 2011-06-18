@@ -57,7 +57,7 @@
 	  (write-number 0 n)
 	  (b-combinator storage #'get-card #'zero-card)))
 
-(defun y-combinator (storage)
+(defun y-combinator (storage slot-f)
   "Y f = f (Y f)
    Y = S S K (S (K (S S (S (S S K)))) K)"
   (unless (/= storage 0) (normal-error))
@@ -77,7 +77,9 @@
 	    (:left  #'put-card   ,storage)	; storage -> I
 	    (:right #'s-card     ,storage)
 	    (:left  #'s-card     ,storage))
-	  (b2-combinator storage #'get-card #'succ-card #'zero-card)))
+	  (b2-combinator storage #'get-card #'succ-card #'zero-card)
+	  (write-number 0 slot-f)
+	  (b-combinator 2 #'get-card #'zero-card)))
 
 (defun w-combinator (storage slot-x slot-y)
   "W x y = x y y
