@@ -57,7 +57,7 @@
 	  (write-number 0 n)
 	  (b-combinator storage #'get-card #'zero-card)))
 
-(defun y-combinator (storage s1 s2 s3)
+(defun y-combinator (storage)
   "Y f = f (Y f)
    Y = S S K (S (K (S S (S (S S K)))) K)"
   (unless (/= storage 0) (normal-error))
@@ -78,3 +78,5 @@
 	    (:right #'s-card     ,storage)
 	    (:left  #'s-card     ,storage))
 	  (b2-combinator storage #'get-card #'succ-card #'zero-card)))
+
+(defun infinite-attack (storage)
