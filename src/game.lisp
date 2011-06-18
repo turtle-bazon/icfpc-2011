@@ -19,7 +19,6 @@
 
 (defparameter *player1* (make-player))
 (defparameter *player2* (make-player))
-(defparameter *max-field* 65535)
 (defparameter *call-count* 0)
 
 (defun %get-field (slot-no player)
@@ -71,8 +70,8 @@
 
 (define-condition normal-error () ())
 
-(defmacro normal-error ()
-  `(signal 'normal-error))
+(defun normal-error ()
+  (signal 'normal-error))
 
 (defun imitate-my-move (side card slot-no)
   (let ((result

@@ -1,5 +1,7 @@
 (in-package :icfpc)
 
+(defparameter *max-field* 65535)
+
 (defun i-card (x)
   "Тождественная функция возвращает аргумент"
   x)
