@@ -79,4 +79,25 @@
 	    (:left  #'s-card     ,storage))
 	  (b2-combinator storage #'get-card #'succ-card #'zero-card)))
 
-(defun infinite-attack (storage)
+(defun w-combinator (storage slot-x slot-y)
+  "W x y = x y y
+   W = S S (K (S K K))"
+  (unless (/= storage 0) (normal-error))
+  (append `((:left  #'put-card   0)
+	    (:left  #'put-card   1)
+	    (:right #'s-card     0)
+	    (:right #'k-card     0)
+	    (:right #'k-card     0)
+	    (:left  #'k-card     0)	; 0 -> k(skk)
+	    (:right #'s-card     1)
+	    (:left  #'s-card     1))	; 1 -> ss
+	  (b-combinator 1 #'get-card #'zero-card) ; 1 -> ss(k(skk))
+	  (write-number 0 slot-x)
+	  (b-combinator 1 #'get-card #'zero-card) ; 1 -> W x
+	  (write-number 0 slot-y)
+	  (b-combinator 1 #'get-card #'zero-card)))
+
+(defun infinite-attack (storage i j n)
+  "Y (attack i j n)"
+  (append (attack-queue 2 i j n)
+	  (y-combinator 2)))
