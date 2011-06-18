@@ -48,109 +48,105 @@
     x))
 
 (defun inc-card (i)
-  "Увеличивает значение здоровья i-го слота на 1, но не более максимума"
-  (unless (typep i 'slot-no) (normal-error))
-  (let ((v (my-vitality i)))
-    (when (and (plusp v) (< v *max-field*))
-      (incf (my-vitality i))))
-  #'i-card)
-
-(defun auto-inc-card (i)
-  "Уменьшает значение здоровья i-го слота на 1, но результат не меньше 0"
-  (unless (typep i 'slot-no) (normal-error))
-  (let ((v (my-vitality i)))
-    (when (plusp v)
-      (decf (my-vitality i))))
-  #'i-card)
+  "Увеличивает значение здоровья i-го слота на 1, но не более максимума /
+   Уменьшает значение здоровья i-го слота на 1, но результат не меньше 0"
+  (if *auto-apply-flag*
+      (progn (unless (typep i 'slot-no) (normal-error))
+	     (let ((v (my-vitality i)))
+	       (when (and (plusp v) (< v *max-field*))
+		 (incf (my-vitality i))))
+	     #'i-card)
+      (progn (unless (typep i 'slot-no) (normal-error))
+	     (let ((v (my-vitality i)))
+	       (when (plusp v)
+		 (decf (my-vitality i))))
+	     #'i-card)))
 
 (defun dec-card (i)
-  "Уменьшает значение здоровья (255-i)-го слота на 1, но результат не меньше 0"
-  (unless (typep i 'slot-no) (normal-error))
-  (let ((v (opp-vitality (- 255 i))))
-    (when (plusp v)
-      (decf (opp-vitality (- 255 i)))))
-  #'i-card)
-
-(defun auto-dec-card (i)
-  "Увеличивает значение здоровья (255-i)-го слота на 1, но не более максимума"
-  (unless (typep i 'slot-no) (normal-error))
-  (let ((v (opp-vitality (- 255 i))))
-    (when (and (plusp v) (< v *max-field*))
-      (incf (opp-vitality (- 255 i)))))
-  #'i-card)
+  "Уменьшает значение здоровья (255-i)-го слота на 1, но результат не меньше 0 /
+   Увеличивает значение здоровья (255-i)-го слота на 1, но не более максимума"
+  (if *auto-apply-flag*
+      (progn (unless (typep i 'slot-no) (normal-error))
+	     (let ((v (opp-vitality (- 255 i))))
+	       (when (plusp v)
+		 (decf (opp-vitality (- 255 i)))))
+	     #'i-card)
+      (progn (unless (typep i 'slot-no) (normal-error))
+	     (let ((v (opp-vitality (- 255 i))))
+	       (when (and (plusp v) (< v *max-field*))
+		 (incf (opp-vitality (- 255 i)))))
+	     #'i-card)))
 
 (defun attack-card (i)
   "Вычитает из здоровья i-го слота защищаегося n,
 вычитает из здоровья j-го слота оппонетна n * 9/10, но результат не меньше 0,
-возвращает тождественную фукнцию"
-  (lambda (j)
-    (lambda (n)
-      (unless (and (typep i 'slot-no)
-		   (typep j 'slot-no)
-		   (typep n 'integer)
-		   (<= n (my-vitality i)))
-	(normal-error))
-      (decf (my-vitality i) n)
-      (when (nth-value 1 (opp-vitality (- 255 j)))
-	(when (minusp (decf (opp-vitality (- 255 j)) (floor (* n 9/10))))
-	  (setf (opp-vitality (- 255 j)) 0)))
-      #'i-card)))
-
-(defun auto-attack-card (i)
-  "Вычитает из здоровья i-го слота защищаегося n,
+возвращает тождественную фукнцию /
+   Вычитает из здоровья i-го слота защищаегося n,
 вычитает из здоровья j-го слота оппонетна n * 9/10, но результат не меньше 0,
 возвращает тождественную фукнцию"
-  (lambda (j)
-    (lambda (n)
-      (unless (and (typep i 'slot-no)
-		   (typep j 'slot-no)
-		   (typep n 'integer)
-		   (<= n (my-vitality i)))
-	(normal-error))
-      (decf (my-vitality i) n)
-      (when (nth-value 1 (opp-vitality (- 255 j)))
-	(when (plusp (opp-vitality (- 255 j)))
-	  (setf (opp-vitality (- 255 j))
-		(min *max-field*
-		     (+ (opp-vitality (- 255 j))
-			(floor (* n 9/10)))))))
-      #'i-card)))
+  (if *auto-apply-flag*
+      (progn (lambda (j)
+	       (lambda (n)
+		 (unless (and (typep i 'slot-no)
+			      (typep j 'slot-no)
+			      (typep n 'integer)
+			      (<= n (my-vitality i)))
+		   (normal-error))
+		 (decf (my-vitality i) n)
+		 (when (nth-value 1 (opp-vitality (- 255 j)))
+		   (when (minusp (decf (opp-vitality (- 255 j)) (floor (* n 9/10))))
+		     (setf (opp-vitality (- 255 j)) 0)))
+		 #'i-card)))
+      (progn (lambda (j)
+	       (lambda (n)
+		 (unless (and (typep i 'slot-no)
+			      (typep j 'slot-no)
+			      (typep n 'integer)
+			      (<= n (my-vitality i)))
+		   (normal-error))
+		 (decf (my-vitality i) n)
+		 (when (nth-value 1 (opp-vitality (- 255 j)))
+		   (when (plusp (opp-vitality (- 255 j)))
+		     (setf (opp-vitality (- 255 j))
+			   (min *max-field*
+				(+ (opp-vitality (- 255 j))
+				   (floor (* n 9/10)))))))
+		 #'i-card)))))
 
 (defun help-card (i)
   "Вычитает из здоровья i-го слота защищаегося n,
 лечит j-ый слот защищиегося на n * 11/10, но не больше максимума,
-возвращает тождественную фукнцию"
-  (lambda (j)
-    (lambda (n)
-      (unless (and (typep i 'slot-no)
-		   (typep j 'slot-no)
-		   (typep n 'integer)
-		   (<= n (my-vitality i)))
-	(normal-error))
-      (decf (my-vitality i) n)
-      (when (plusp (my-vitality j))
-	(setf (my-vitality j)
-	      (min *max-field*
-		   (+ (my-vitality j) (floor (* n 11/10))))))
-      #'i-card)))
-
-(defun auto-help-card (i)
-  "Вычитает из здоровья i-го слота защищаегося n,
+возвращает тождественную фукнцию /
+   Вычитает из здоровья i-го слота защищаегося n,
 лечит j-ый слот защищиегося на n * 11/10, но не больше максимума,
 возвращает тождественную фукнцию"
-  (lambda (j)
-    (lambda (n)
-      (unless (and (typep i 'slot-no)
-		   (typep j 'slot-no)
-		   (typep n 'integer)
-		   (<= n (my-vitality i)))
-	(normal-error))
-      (decf (my-vitality i) n)
-      (when (plusp (my-vitality j))
-	(setf (my-vitality j)
-	      (max 0
-		   (- (my-vitality j) (floor (* n 11/10))))))
-      #'i-card)))
+  (if *auto-apply-flag*
+      (progn (lambda (j)
+	       (lambda (n)
+		 (unless (and (typep i 'slot-no)
+			      (typep j 'slot-no)
+			      (typep n 'integer)
+			      (<= n (my-vitality i)))
+		   (normal-error))
+		 (decf (my-vitality i) n)
+		 (when (plusp (my-vitality j))
+		   (setf (my-vitality j)
+			 (min *max-field*
+			      (+ (my-vitality j) (floor (* n 11/10))))))
+		 #'i-card)))
+      (progn (lambda (j)
+	       (lambda (n)
+		 (unless (and (typep i 'slot-no)
+			      (typep j 'slot-no)
+			      (typep n 'integer)
+			      (<= n (my-vitality i)))
+		   (normal-error))
+		 (decf (my-vitality i) n)
+		 (when (plusp (my-vitality j))
+		   (setf (my-vitality j)
+			 (max 0
+			      (- (my-vitality j) (floor (* n 11/10))))))
+		 #'i-card)))))
 
 (defun copy-card (i)
   "Возвращаяет значение field i-го слота защищающегося"

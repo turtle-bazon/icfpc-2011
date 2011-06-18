@@ -27,6 +27,24 @@
       (:right (format t "~A~%~A~%~A~%" 2 v3 (func->name v2))))
     (values)))
 
+(defun auto-apply ()
+  (setf *call-count* 0)
+  (let ((*auto-apply-flag* t))
+    (dotimes (i 256)
+      (when (= (my-vitality i) -1)
+	(when (> *call-count* 1000) (return))
+	(card-call (my-field i) #'i-card)
+	(setf (my-field i) #'i-card)
+	(setf (my-vitality i) 0)))))
+
+(defun auto-my-apply ()
+  (auto-apply))
+
+(defun auto-opp-apply ()
+  (let ((*player1* *player2*)
+	(*player2* *player1*))
+    (auto-apply)))
+
 (defun game-loop (player-id)
   (let ((counter 100000)
 	(prev-opp-move
@@ -38,10 +56,14 @@
 	      (all-slots-dead-p *player1*)
 	      (all-slots-dead-p *player2*))
 	  (return) (decf counter))
+
       (let ((my-move (make-move prev-opp-move)))
+	(auto-my-apply)
 	(apply #'imitate-my-move my-move) ; think of a rollback here
 	(write-my-move my-move))
+      (auto-opp-apply)
       (apply #'imitate-opp-move (setf prev-opp-move (read-opp-move))))
+
     (let ((my-alive (slots-alive-num *player1*))
 	  (opp-alive (slots-alive-num *player2*)))
       (cond ((> my-alive opp-alive) :win)

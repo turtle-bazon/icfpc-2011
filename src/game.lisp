@@ -20,6 +20,7 @@
 (defparameter *player1* (make-player))
 (defparameter *player2* (make-player))
 (defparameter *call-count* 0)
+(defparameter *auto-apply-flag* nil)
 
 (defun %get-field (slot-no player)
   (let ((val (slot-field (svref (player-slots player) slot-no))))

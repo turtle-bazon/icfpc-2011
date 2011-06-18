@@ -151,30 +151,33 @@
 
 (lift:addtest
     test-auto-inc-card-1
-  (loop for v from 1 to 65535
-     for slot = (random 255)
-     do (progn
-	  (setf (my-vitality slot) v)
-	  (lift:ensure-same (auto-inc-card slot) #'i-card)
-	  (lift:ensure-same (my-vitality slot)
-			    (- v 1)))))
+  (let ((*auto-apply-flag* t))
+    (loop for v from 1 to 65535
+	  for slot = (random 255)
+	  do (progn
+	       (setf (my-vitality slot) v)
+	       (lift:ensure-same (inc-card slot) #'i-card)
+	       (lift:ensure-same (my-vitality slot)
+				 (- v 1))))))
 
 (lift:addtest
     test-auto-inc-card-2
-  (let ((slot (random 255)))
-    (setf (my-vitality slot) 0)
-    (lift:ensure-same (auto-inc-card slot) #'i-card)
-    (lift:ensure-same (my-vitality slot)
-		      0)
-    (setf (my-vitality slot) -1)
-    (lift:ensure-same (auto-inc-card slot) #'i-card)
-    (lift:ensure-same (my-vitality slot)
-		      -1)))
+  (let ((*auto-apply-flag* t))
+    (let ((slot (random 255)))
+      (setf (my-vitality slot) 0)
+      (lift:ensure-same (inc-card slot) #'i-card)
+      (lift:ensure-same (my-vitality slot)
+			0)
+      (setf (my-vitality slot) -1)
+      (lift:ensure-same (inc-card slot) #'i-card)
+      (lift:ensure-same (my-vitality slot)
+			-1))))
 
 (lift:addtest
     test-auto-inc-card-3
-  (lift:ensure-condition normal-error (auto-inc-card -1))
-  (lift:ensure-condition normal-error (auto-inc-card 256)))
+  (let ((*auto-apply-flag* t))
+    (lift:ensure-condition normal-error (inc-card -1))
+    (lift:ensure-condition normal-error (inc-card 256))))
 
 (lift:addtest
     test-dec-card-1
@@ -208,38 +211,41 @@
 
 (lift:addtest
     test-auto-dec-card-1
-  (loop for v from 1 to 65534
-     for i = (random 255)
-     do (progn
-	  (setf (opp-vitality (- 255 i)) v)
-	  (lift:ensure-same (auto-dec-card i)
-			    #'i-card)
-	  (lift:ensure-same (opp-vitality (- 255 i))
-			    (+ v 1)))))
+  (let ((*auto-apply-flag* t))
+    (loop for v from 1 to 65534
+	  for i = (random 255)
+	  do (progn
+	       (setf (opp-vitality (- 255 i)) v)
+	       (lift:ensure-same (dec-card i)
+				 #'i-card)
+	       (lift:ensure-same (opp-vitality (- 255 i))
+				 (+ v 1))))))
 
 (lift:addtest
     test-auto-dec-card-2
-  (let ((i (random 255)))
-    (setf (opp-vitality (- 255 i)) 0)
-    (lift:ensure-same (auto-dec-card i)
-		      #'i-card)
-    (lift:ensure-same (opp-vitality (- 255 i))
-		      0)
-    (setf (opp-vitality (- 255 i)) -1)
-    (lift:ensure-same (auto-dec-card i)
-		      #'i-card)
-    (lift:ensure-same (opp-vitality (- 255 i))
-		      -1)
-    (setf (opp-vitality (- 255 i)) 65535)
-    (lift:ensure-same (auto-dec-card i)
-		      #'i-card)
-    (lift:ensure-same (opp-vitality (- 255 i))
-		      65535)))
+  (let ((*auto-apply-flag* t))
+    (let ((i (random 255)))
+      (setf (opp-vitality (- 255 i)) 0)
+      (lift:ensure-same (dec-card i)
+			#'i-card)
+      (lift:ensure-same (opp-vitality (- 255 i))
+			0)
+      (setf (opp-vitality (- 255 i)) -1)
+      (lift:ensure-same (dec-card i)
+			#'i-card)
+      (lift:ensure-same (opp-vitality (- 255 i))
+			-1)
+      (setf (opp-vitality (- 255 i)) 65535)
+      (lift:ensure-same (dec-card i)
+			#'i-card)
+      (lift:ensure-same (opp-vitality (- 255 i))
+			65535))))
 
 (lift:addtest
     test-auto-dec-card-3
-  (lift:ensure-condition normal-error (auto-dec-card -1))
-  (lift:ensure-condition normal-error (auto-dec-card 256)))
+  (let ((*auto-apply-flag* t))
+    (lift:ensure-condition normal-error (dec-card -1))
+    (lift:ensure-condition normal-error (dec-card 256))))
 
 (lift:addtest
     test-attack-card-1
