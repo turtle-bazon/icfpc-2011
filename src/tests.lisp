@@ -190,22 +190,22 @@
 (lift:addtest
     test-attack-card-2
   (let* ((i -1)
-	 (j -1)
+	 (j (randrom 255))
 	 (j-fun (attack-card i))
 	 (n-fun (funcall j-fun j)))
     (lift:ensure-condition normal-error (funcall n-fun (random 255)))))
 
 (lift:addtest
     test-attack-card-3
-  (let* ((i -1)
-	 (j 256)
+  (let* ((i 256)
+	 (j (random 255))
 	 (j-fun (attack-card i))
 	 (n-fun (funcall j-fun j)))
     (lift:ensure-condition normal-error (funcall n-fun (random 255)))))
 
 (lift:addtest
     test-attack-card-4
-  (let* ((i 256)
+  (let* ((i (random 255))
 	 (j -1)
 	 (j-fun (attack-card i))
 	 (n-fun (funcall j-fun j)))
@@ -213,7 +213,7 @@
 
 (lift:addtest
     test-attack-card-5
-  (let* ((i 256)
+  (let* ((i (random 255))
 	 (j 256)
 	 (j-fun (attack-card i))
 	 (n-fun (funcall j-fun j)))
@@ -281,22 +281,22 @@
 (lift:addtest
     test-help-card-1
   (let* ((i -1)
-	 (j -1)
+	 (j (random 255))
 	 (j-fun (help-card i))
 	 (n-fun (funcall j-fun j)))
     (lift:ensure-condition normal-error (funcall n-fun (random 255)))))
 
 (lift:addtest
     test-help-card-2
-  (let* ((i -1)
-	 (j 256)
+  (let* ((i 256)
+	 (j (random 255))
 	 (j-fun (help-card i))
 	 (n-fun (funcall j-fun j)))
     (lift:ensure-condition normal-error (funcall n-fun (random 255)))))
 
 (lift:addtest
     test-help-card-3
-  (let* ((i 256)
+  (let* ((i (random 255))
 	 (j -1)
 	 (j-fun (help-card i))
 	 (n-fun (funcall j-fun j)))
@@ -304,7 +304,7 @@
 
 (lift:addtest
     test-help-card-4
-  (let* ((i 256)
+  (let* ((i (random 255))
 	 (j 256)
 	 (j-fun (help-card i))
 	 (n-fun (funcall j-fun j)))
