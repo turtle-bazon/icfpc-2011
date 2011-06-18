@@ -314,21 +314,21 @@
     test-help-card-5
   (let ((i (random 255))
 	(j (random 255)))
-    (let* ((j-fun (attack-card i))
+    (let* ((j-fun (help-card i))
 	   (n-fun (funcall j-fun j)))
       (setf (my-vitality i) 200)
-      (setf (my-vitality j) 210)
+      (setf (my-vitality j) 102)
       (lift:ensure-same (funcall n-fun 99) #'i-card)
       (lift:ensure-same (my-vitality i)
 			101)
       (lift:ensure-same (my-vitality j)
-			102))))
+			210))))
 
 (lift:addtest
     test-help-card-6
   (let ((i (random 255))
 	(j (random 255)))
-    (let* ((j-fun (attack-card i))
+    (let* ((j-fun (help-card i))
 	   (n-fun (funcall j-fun j)))
       (setf (my-vitality i) 200)
       (lift:ensure-condition normal-error (funcall n-fun 210))
@@ -338,7 +338,7 @@
     test-help-card-7
   (let ((i (random 255))
 	(j (random 255)))
-    (let* ((j-fun (attack-card i))
+    (let* ((j-fun (help-card i))
 	   (n-fun (funcall j-fun j)))
       (setf (my-vitality i) 100)
       (setf (my-vitality j) 0)
@@ -352,7 +352,7 @@
     test-help-card-8
   (let ((i (random 255))
 	(j (random 255)))
-    (let* ((j-fun (attack-card i))
+    (let* ((j-fun (help-card i))
 	   (n-fun (funcall j-fun j)))
       (setf (my-vitality i) 100)
       (setf (my-vitality j) -1)
@@ -366,7 +366,7 @@
     test-help-card-9
   (let ((i (random 255))
 	(j (random 255)))
-    (let* ((j-fun (attack-card i))
+    (let* ((j-fun (help-card i))
 	   (n-fun (funcall j-fun j)))
       (setf (my-vitality i) 200)
       (setf (my-vitality j) 65525)

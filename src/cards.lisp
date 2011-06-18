@@ -88,13 +88,14 @@
     (lambda (n)
       (unless (and (typep i 'slot-no)
 		   (typep j 'slot-no)
-		   (or (not (integerp n))
-		       (> n (my-vitality i))))
+		   (typep n 'integer)
+		   (<= n (my-vitality i)))
 	(normal-error))
       (decf (my-vitality i) n)
       (when (plusp (my-vitality j))
-	(when (> (incf (my-vitality j) (floor (* n 11/10))) *max-field*)
-	  (setf (my-vitality j) *max-field*)))
+	(setf (my-vitality j)
+	      (min *max-field*
+		   (+ (my-vitality j) (floor (* n 11/10))))))
       #'i-card)))
 
 (defun copy-card (i)
