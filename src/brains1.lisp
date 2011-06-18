@@ -21,26 +21,28 @@
 ;; 	(:right #'get-card    storage)	 ; 2 x succ
 ;; 	(:right #'zero-card   storage))) ; 2 x zero
 
-(defun write-number (storage n)
+(defun write-number (slot n)
   "Writes n to slot"
-  (append '((:left  #'put-card  slot)
-	    (:right #'zero-card slot))
+  (append `((:left  #'put-card  ,slot)
+	    (:right #'zero-card ,slot))
 	  (loop repeat n
-	     collect '(:left #'succ-card slot))))
+	     collect `(:left #'succ-card ,slot))))
 
-(defun b-combinator (storage)
+(defun b-combinator (storage b c)
   "B combinator: Babc = S(Ka)bc = a(bc), where b=get and c=zero"
   `((:left  #'k-card    ,storage)
     (:left  #'s-card    ,storage)
-    (:right #'get-card  ,storage)
-    (:right #'zero-card ,storage)))
+    (:right b           ,storage)
+    (:right c           ,storage)))
 
 (defun attack-queue (storage i j n)
   "Function is written to storage; it attacks j-th opponent's slot using i-th our with given value n"
   (assert (/= storage 0))
-  (append (write-number 0 i)
-	  (b-combinator storage)
+  (append `((:left  #'put-card    ,slot)
+	    (:right #'attack-card ,slot))
+	  (write-number 0 i)
+	  (b-combinator storage #'get-card #'zero-card)
 	  (write-number 0 j)
-	  (b-combinator storage)
+	  (b-combinator storage #'get-card #'zero-card)
 	  (write-number 0 n)
-	  (b-combinator storage)))
+	  (b-combinator storage #'get-card #'zero-card)))
