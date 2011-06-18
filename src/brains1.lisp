@@ -10,3 +10,13 @@
       (:left  #'S-card      ,my)     ; 1 S 0
       (:right #'succ-card   ,my)     ; 2 0 succ
       (:right #'zero-card   ,my))))  ; 2 0 zero
+
+(defun make-attack-queue (storage)
+  "Attacks 0-th slot using our 0-th slot with attack value given in 0-th slot"
+  (list (:right #'attack-card storage)	 ; 2 0 attack
+	(:right #'zero-card   storage)	 ; 2 0 zero
+	(:right #'zero-card   storage)	 ; 2 0 zero
+	(:left  #'K-card      storage)	 ; 1 K 0
+	(:left  #'S-card      storage)	 ; 1 S 0
+	(:right #'get-card    storage)	 ; 2 0 succ
+	(:right #'zero-card   storage))) ; 2 0 zero
