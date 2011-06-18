@@ -56,13 +56,20 @@
 
 (defun alive-p (slot-no) (nth-value 1 (my-vitality slot-no)))
 
+(defun card-function-p (card)
+  (and (not (eq card #'zero-card))
+       (functionp card)))
+
 (defun card-call (card-fun arg)
   (incf *call-count*)
   (unless (> 1000 *call-count*) (normal-error))
   (unless (functionp card-fun) (normal-error))
-  (funcall card-fun arg))
+  (if (eq card-fun #'zero-card)
+      0
+      (funcall card-fun (if (eq arg #'zero-card) 0 arg))))
 
 (defun left-apply (card slot-no)
+  (unless (card-function-p card) (normal-error))
   (card-call card (my-field slot-no)))
 
 (defun right-apply (card slot-no)
@@ -79,7 +86,7 @@
 	   (handler-bind ((normal-error (lambda (c) (declare (ignore c)) (invoke-restart 'normal-error-restart))))
 	     (setf *call-count* 0)
 	     (if (and (functionp card)
-		      (nth-value 1 (my-vitality slot-no)))
+		      (alive-p slot-no))
 		 (setf (my-field slot-no)
 		       (ecase side
 			 (:left  (left-apply card slot-no))
