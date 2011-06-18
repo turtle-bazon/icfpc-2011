@@ -6,10 +6,10 @@
   "Тождественная функция возвращает аргумент"
   x)
 
-(defun zero-card (x)
+#|(defun zero-card (x)
   "Возвращает константу 0"
   (declare (ignore x))
-  0)
+  0)|#
 
 (defun succ-card (n)
   "Увеличивает аргумент на 1"
