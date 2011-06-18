@@ -114,10 +114,10 @@
 (defun zombie-card (i)
   "Если i-ый слот мёртв (здовье 0 или -1), устанавливает его здоровье в -1,
 в поле field кладёт x."
-  (unless (and (typep (- 255 i) 'slot-no)
-	       (not (nth-value 1 (opp-vitality (- 255 i)))))
-    (normal-error))
   (lambda (x)
-    (setf (opp-field i) x
-	  (opp-vitality i) -1)
+      (unless (and (typep i 'slot-no)
+		   (not (nth-value 1 (opp-vitality (- 255 i)))))
+	(normal-error))
+    (setf (opp-field (- 255 i)) x
+	  (opp-vitality (- 255 i)) -1)
     #'i-card))
