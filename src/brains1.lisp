@@ -38,8 +38,8 @@
 (defun attack-queue (storage i j n)
   "Function is written to storage; it attacks j-th opponent's slot using i-th our with given value n"
   (assert (/= storage 0))
-  (append `((:left  #'put-card    ,slot)
-	    (:right #'attack-card ,slot))
+  (append `((:left  #'put-card    ,storage)
+	    (:right #'attack-card ,storage))
 	  (write-number 0 i)
 	  (b-combinator storage #'get-card #'zero-card)
 	  (write-number 0 j)
