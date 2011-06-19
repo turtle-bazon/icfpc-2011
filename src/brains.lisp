@@ -1,7 +1,6 @@
 (in-package :icfpc)
 
 (defun make-move (opp-move)
-  (setf *move-count* 0)
   (funcall #'make-move-1 opp-move))
 
 (defun dumb-move ()
@@ -43,9 +42,10 @@
     (setf *current-attack-queue*
 	  (let ((s (attack-optimal-source *init-power*)))
 	    (if s (attack-queue-1st-2nd-slot 3 s)
-		(let ((s1 (position-if #'(lambda (s) (plusp (slot-vitality s)))
+		(let ((s1 (position-if #'(lambda (s) (and (plusp (slot-vitality s))
+							  (< (slot-vitality s) *init-power*)))
 				       (subseq (player-slots *player1*) 4))))
-		  (multiple-inc-slot s1))))))
+		  (multiple-heal 11 s1))))))
   (let ((move (car *current-attack-queue*)))
     (setf *current-attack-queue*
 	  (let ((res (apply #'imitate-my-move move)))

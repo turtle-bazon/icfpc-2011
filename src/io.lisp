@@ -11,7 +11,7 @@
 	(string-downcase name))))
 
 (defun read-opp-move ()
-  (let ((v1 (parse-integer (read-line)))
+  (let ((v1 (parse-integer (read-line t nil :eof nil)))
 	(v2 (read-line))
 	(v3 (read-line)))
     (ecase v1
@@ -46,15 +46,13 @@
     (auto-apply)))
 
 (defun game-loop (player-id)
-  (setf *game-count* 0)
   (let ((prev-opp-move
 	 (ecase player-id
 	   (0 nil)
 	   (1 (read-opp-move)))))
     (loop
       (when (or (all-slots-dead-p *player1*)
-		(all-slots-dead-p *player2*)
-		(= *game-count* 100000))
+		(all-slots-dead-p *player2*))
 	(return))
 
       (let ((my-move (make-move prev-opp-move)))
