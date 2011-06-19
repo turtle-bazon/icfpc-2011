@@ -1,16 +1,13 @@
 (in-package :icfpc)
 
-(defun write-put (slot)
-  (unless (eq (my-field slot) #'i-card)
-    `((:left ,#'put-card ,slot))))
-
 ;;; TODO: rewrite, use dbl and binary (4 = dbl(dbl(1))
 ;;; done. puts strictly 'n' into slot, if strict is t
 ;;; else puts a number more than 'n'
 (defun write-number (slot n &optional (strict t))
   "Writes n to slot"
-  (append (write-put slot)
-	  `((:right ,#'zero-card ,slot))
+  (append ;(write-put slot)
+	  `((:left ,#'put-card ,slot)
+	    (:right ,#'zero-card ,slot))
 	  (unless (zerop n)
 	    (let ((d (floor (log n 2))))
 	      (unless (or (<= (my-vitality slot) (expt 2 (1+ d)))
@@ -44,8 +41,9 @@
 (defun attack-queue (storage i j n)
   "Function is written to storage; it attacks j-th opponent's slot using i-th our with given value n"
   (unless (/= storage 0) (normal-error))
-  (append (write-put storage)
-	  `((:right ,#'attack-card ,storage))
+  (append ;(write-put storage)
+	  `((:left ,#'put-card ,storage)
+	    (:right ,#'attack-card ,storage))
 	  (write-number 0 i)
 	  (b-combinator storage #'get-card #'zero-card)
 	  (write-number 0 j)
@@ -60,9 +58,11 @@
    Y = WS(BWB)"
   (unless (/= storage 0) (normal-error))
   (unless (/= storage 1) (normal-error))
-  (append (write-put 0)
-	  (write-put 1)
-	  `((:right ,#'s-card     0)
+  (append ;(write-put 0)
+	  ;(write-put 1)
+	  `((:left ,#'put-card 0)
+	    (:left ,#'put-card 1)
+	    (:right ,#'s-card     0)
 	    (:right ,#'s-card     0)
 	    (:right ,#'k-card     0)
 	    (:left  ,#'s-card     0)	; 0 -> s(ssk)
@@ -73,8 +73,9 @@
 	    (:left  ,#'s-card     1)
 	    (:right ,#'k-card     1)
 	    (:left  ,#'k-card     1))   ; 1 -> k(s(k(ss(s(ssk)))) k)
-	  (write-put storage)
-	  `((:right ,#'s-card     ,storage)
+	  ;(write-put storage)
+	  `((:left ,#'put-card ,storage)
+	    (:right ,#'s-card     ,storage)
 	    (:left  ,#'s-card     ,storage)) ; storage -> ss
 	  (b2-combinator storage #'get-card #'succ-card #'zero-card) ; storage -> ss(k(s(k(ss(s(ssk))))k))
 	  (write-number 0 slot-f)
@@ -86,8 +87,9 @@
    W = S S (K (S K K))
    W x y = S x I y"
   (unless (/= storage 0) (normal-error))
-  (append (write-put 1)
-	  `((:right ,#'s-card     1))
+  (append ;(write-put 1)
+	  `((:left ,#'put-card 1)
+	    (:right ,#'s-card     1))
 	  (write-number 0 slot-x)
 	  (b-combinator 1 #'get-card #'zero-card) ; 1 -> S x
 	  `((:right ,#'i-card      1))		  ; 1 -> S x I
@@ -100,8 +102,9 @@
    F x y = x y (x y) = S x x y"
   (unless (/= storage 0) (normal-error))
   (unless (/= storage 1) (normal-error))
-  (append (write-put 1)
-	  `((:right ,#'s-card    1))
+  (append ;(write-put 1)
+	  `((:left ,#'put-card 1)
+	    (:right ,#'s-card    1))
 	  (write-number 0 slot-x)
 	  (b2-combinator 1 #'get-card #'get-card #'zero-card)
 	  (b2-combinator 1 #'get-card #'get-card #'zero-card)
@@ -121,8 +124,9 @@
 (defun attack-without-value (storage i j)
   "attack i j"
   (unless (/= storage 0) (normal-error))
-  (append (write-put storage)
-	  `((:right ,#'attack-card ,storage))
+  (append ;(write-put storage)
+	  `((:left ,#'put-card ,storage)
+	    (:right ,#'attack-card ,storage))
 	  (write-number 0 i)
 	  (b-combinator storage #'get-card #'zero-card)
 	  (write-number 0 j)
@@ -143,8 +147,9 @@
 
 (defun attack-queue-2nd-slot (storage i n)
   "attack; j=my[2]"
-  (append (write-put storage)
-	  `((:right ,#'attack-card ,storage))
+  (append ;(write-put storage)
+	  `((:left ,#'put-card ,storage)
+	    (:right ,#'attack-card ,storage))
 	  (write-number 0 i)
 	  (b-combinator storage #'get-card #'zero-card)
 	  (write-number 0 2)
@@ -154,8 +159,9 @@
 
 (defun attack-queue-1st-2nd-slot (storage i)
   "attack; j=my[2]; n=my[1]"
-  (append (write-put storage)
-	  `((:right ,#'attack-card ,storage))
+  (append ;(write-put storage)
+	  `((:left ,#'put-card ,storage)
+	    (:right ,#'attack-card ,storage))
 	  (write-number 0 i)
 	  (b-combinator storage #'get-card #'zero-card)
 	  (write-number 0 2)
@@ -164,8 +170,9 @@
 
 (defun protect (storage i)
   "protect slots using revive function"
-  (append (write-put storage)
-	  `((:right ,#'revive-card ,storage))
+  (append ;(write-put storage)
+	  `((:left ,#'put-card ,storage)
+	    (:right ,#'revive-card ,storage))
 	  (case i
 	    (0 `((:right ,#'zero-card ,storage)))
 	    (1 (b-combinator storage #'succ-card #'zero-card))
@@ -178,11 +185,15 @@
   (unless (/= 0 storage) (normal-error))
   (unless (/= 1 storage) (normal-error))
   (unless (/= 2 storage) (normal-error))
-  (append (write-put 0)
-	  (write-put 1)
-	  (write-put 2)
-	  (write-put storage)
-	  `((:left  ,#'s-card 1)
+  (append ;(write-put 0)
+	  ;(write-put 1)
+	  ;(write-put 2)
+	  ;(write-put storage)
+	  `((:left ,#'put-card 0)
+	    (:left ,#'put-card 1)
+	    (:left ,#'put-card 2)
+	    (:left ,#'put-card ,storage)
+	    (:left  ,#'s-card 1)
 	    (:right ,#'i-card 1)	; 1 -> SII
 	    (:left  ,#'k-card 1)	; 1 -> K(SII)
 	    (:right ,#'s-card 2))	; 2 -> S

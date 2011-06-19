@@ -10,10 +10,12 @@
   (declare (ignore opp-move))
   (dumb-move))|#
 
-
+(defparameter *storage-slots* '(0 1 2 3))
 (defparameter *current-attack-queue* nil)
 (defparameter *current-kill-queue* nil)
-(defparameter *init-power* 1000)
+(defparameter *prev-kill-state* nil)
+(defparameter *current-protect-queue* nil)
+(defparameter *init-power* 1024)
 (defparameter *current-kill-state* :init)
 
 (defun imitate-restart ()
@@ -21,7 +23,9 @@
 	*player2* (make-player)
 	*current-attack-queue* nil
 	*current-kill-queue* nil
-	*init-power* 2000
+	*prev-kill-state* nil
+	*current-protect-queue* nil
+	*init-power* 1024
 	*current-kill-state* :init)
   t)
 
@@ -73,22 +77,45 @@
       (progn (setf *current-kill-state* :attack)
 	     (make-move-1 nil))))
 
+(defun perform-protect (slot)
+  (unless *current-protect-queue*
+    (setf *current-protect-queue*
+	  (append (protect (if (alive-p 0) 0
+			       (first (remove-if-not #'alive-p (loop for i from 4 to 255 collect i))))
+			   slot)
+		  `((:left ,#'put-card ,slot)))))
+  (let ((move (car *current-protect-queue*)))
+    (setf *current-protect-queue*
+	  (unless (eq (apply #'imitate-my-move move) :error)
+	    (cdr *current-protect-queue*)))
+    (values move (null *current-protect-queue*))))
+
 (defun make-move-1 (opp-move) (declare (ignore opp-move))
-  (ecase *current-kill-state*
-    (:init
-       (multiple-value-bind (move finish)
-	   (prepare-kill-slot)
-	 (when finish (setf *current-kill-state* :attack))
-	 move))
-    (:attack
-       (multiple-value-bind (move finish)
-	   (perform-attack)
-	 (when finish
-	   (setf *current-kill-state* :next))
-	 move))
-    (:next
-       (multiple-value-bind (move finish)
-	   (next-attack-params)
-	 (when finish
-	   (setf *current-kill-state* :attack))
-	 move))))
+  (let ((protect-aims (remove nil (mapcar #'(lambda (x) (if (alive-p x) nil x)) (loop for i from 4 to 255 collect i)))))
+    (when (and protect-aims (not *current-protect-queue*))
+      (setf *prev-kill-state* *current-kill-state*
+	    *current-kill-state* :protect))
+    (ecase *current-kill-state*
+      (:init
+	 (multiple-value-bind (move finish)
+	     (prepare-kill-slot)
+	   (when finish (setf *current-kill-state* :attack))
+	   move))
+      (:protect
+	 (multiple-value-bind (move finish)
+	     (perform-protect (car protect-aims))
+	   (when finish
+	     (setf *current-kill-state* *prev-kill-state*))
+	   move))
+      (:attack
+	 (multiple-value-bind (move finish)
+	     (perform-attack)
+	   (when finish
+	     (setf *current-kill-state* :next))
+	   move))
+      (:next
+	 (multiple-value-bind (move finish)
+	     (next-attack-params)
+	   (when finish
+	     (setf *current-kill-state* :attack))
+	   move)))))
