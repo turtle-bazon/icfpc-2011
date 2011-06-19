@@ -54,9 +54,8 @@
 		(all-slots-dead-p *player2*))
 	(return))
 
-      (let ((my-move (make-move prev-opp-move)))
-	(auto-my-apply)
-	(write-my-move my-move))
+      (auto-my-apply)
+      (write-my-move (make-move prev-opp-move))
       (auto-opp-apply)
       (apply #'imitate-opp-move (setf prev-opp-move (read-opp-move))))
 
