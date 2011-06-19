@@ -30,7 +30,8 @@
   t)
 
 (defun attack-optimal-source (min-power)
-  (+ (position-if #'(lambda (s) (> (slot-vitality s) min-power)) (subseq (player-slots *player1*) 4)) 4))
+  (let ((pos (position-if #'(lambda (s) (> (slot-vitality s) min-power)) (subseq (player-slots *player1*) 4))))
+    (if (null pos) nil (+ pos 4))))
 
 (defun attack-optimal-delta ()
   (if (nth-value 1 (opp-vitality (- 255 (my-field 2))))
@@ -39,7 +40,11 @@
 (defun perform-attack ()
   (unless *current-attack-queue*
     (setf *current-attack-queue*
-	  (attack-queue-1st-2nd-slot 3 (attack-optimal-source *init-power*))))
+	  (let ((s (attack-optimal-source *init-power*)))
+	    (if s (attack-queue-1st-2nd-slot 3 s)
+		(let ((s1 (position-if #'(lambda (s) (plusp (slot-vitality s)))
+				       (subseq (player-slots *player1*) 4))))
+		  (multiple-inc-slot s1))))))
   (let ((move (car *current-attack-queue*)))
     (setf *current-attack-queue*
 	  (let ((res (apply #'imitate-my-move move)))
@@ -80,8 +85,8 @@
 (defun perform-protect (slot)
   (unless *current-protect-queue*
     (setf *current-protect-queue*
-	  (append (protect (if (alive-p 0) 0
-			       (first (remove-if-not #'alive-p (loop for i from 4 to 255 collect i))))
+	  (append (protect (if (alive-p 3) 3
+			       (first (remove-if-not #'alive-p (loop for i from 0 to 255 collect i))))
 			   slot)
 		  `((:left ,#'put-card ,slot)))))
   (let ((move (car *current-protect-queue*)))
