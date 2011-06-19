@@ -141,6 +141,16 @@
 	  (b2-combinator storage #'get-card #'get-card #'zero-card)
 	  (b2-combinator storage #'get-card #'succ-card #'zero-card)))
 
+(defun protect (storage i)
+  "protect slots using revive function"
+  (append `((:left  ,#'put-card    ,storage)
+	    (:right ,#'revive-card ,storage))
+	  (case i
+	    (0 `((:right ,#'zero-card ,storage)))
+	    (1 (b-combinator storage #'succ-card #'zero-card))
+	    (otherwise (list (write-number 0 i)
+			     (b2-combinator storage #'get-card #'get-card #'zero-card))))))
+
 ;;; doesn't work, has to be rewritten - ?
 ;(defun infinite-attack (storage i j n)
 ;  "Y (attack i j n)"
