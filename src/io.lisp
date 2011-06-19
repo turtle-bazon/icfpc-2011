@@ -11,7 +11,7 @@
 	(string-downcase name))))
 
 (defun read-opp-move ()
-  (let ((v1 (parse-integer (read-line t nil :eof nil)))
+  (let ((v1 (parse-integer (read-line)))
 	(v2 (read-line))
 	(v3 (read-line)))
     (ecase v1
@@ -28,11 +28,10 @@
     (values)))
 
 (defun auto-apply ()
-  (setf *auto-count* 0)
   (let ((*auto-apply-flag* t))
     (dotimes (i 256)
+      (setf *call-count* 0)
       (when (= (my-vitality i) -1)
-	(when (> *auto-count* 1000) (return))
 	(card-call (my-field i) #'i-card)
 	(setf (my-field i) #'i-card)
 	(setf (my-vitality i) 0)))))
