@@ -46,9 +46,9 @@
     (values val (plusp val))))
 
 (defun %set-vitality (slot-no player new)
-  (if (typep new 'vitality)
-      (setf (slot-vitality (svref (player-slots player) slot-no)) new)
-      (error "incorrect vitality")))
+;  (if (typep new 'vitality)
+  (setf (slot-vitality (svref (player-slots player) slot-no)) (max new -1)))
+;      (error "incorrect vitality")))
 
 (defun my-vitality  (slot-no) (%get-vitality slot-no *player1*))
 (defun opp-vitality (slot-no) (%get-vitality slot-no *player2*))

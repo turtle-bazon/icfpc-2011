@@ -1,12 +1,24 @@
 (in-package :icfpc)
 
-;; TODO: rewrite, use dbl and binary (4 = dbl(dbl(1)), not succ(succ(succ(1))) )
-(defun write-number (slot n)
+;;; TODO: rewrite, use dbl and binary (4 = dbl(dbl(1))
+;;; done. puts strictly 'n' into slot, if strict is t
+;;; else puts a number more than 'n'
+(defun write-number (slot n &optional (strict t))
   "Writes n to slot"
   (append `((:left  ,#'put-card  ,slot)
 	    (:right ,#'zero-card ,slot))
-	  (loop repeat n
-	     collect `(:left ,#'succ-card ,slot))))
+	  (unless (zerop n)
+	    (let ((d (floor (log n 2))))
+	      (unless (or (<= (my-vitality slot) (expt 2 (1+ d)))
+			  strict)
+		(incf d))
+	      (append `((:left ,#'succ-card ,slot))
+		      (loop repeat d
+			    collect `(:left ,#'dbl-card ,slot))
+		      (when (or (<= (my-vitality slot) (expt 2 (1+ d)))
+				strict)
+			(loop repeat (rem n (expt 2 d))
+			      collect `(:left ,#'succ-card ,slot))))))))
 
 (defun b-combinator (storage b c)
   "B combinator: Babc = S(Ka)bc = a(bc)"
@@ -34,7 +46,7 @@
 	  (b-combinator storage #'get-card #'zero-card)
 	  (write-number 0 j)
 	  (b-combinator storage #'get-card #'zero-card)
-	  (write-number 0 n)
+	  (write-number 0 n nil) ;; equal to or more than n
 	  (b-combinator storage #'get-card #'zero-card)))
 
 ;; has to be tested
