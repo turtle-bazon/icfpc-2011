@@ -5,8 +5,9 @@
 ;;; else puts a number more than 'n'
 (defun write-number (slot n &optional (strict t))
   "Writes n to slot"
-  (append `((:left  ,#'put-card  ,slot)
-	    (:right ,#'zero-card ,slot))
+  (append (unless (eq (my-field slot) #'i-card)
+	    `((:left  ,#'put-card  ,slot)))
+	  `((:right ,#'zero-card ,slot))
 	  (unless (zerop n)
 	    (let ((d (floor (log n 2))))
 	      (unless (or (<= (my-vitality slot) (expt 2 (1+ d)))
@@ -148,8 +149,8 @@
 	  (case i
 	    (0 `((:right ,#'zero-card ,storage)))
 	    (1 (b-combinator storage #'succ-card #'zero-card))
-	    (otherwise (list (write-number 0 i)
-			     (b2-combinator storage #'get-card #'get-card #'zero-card))))))
+	    (otherwise (append (write-number 0 i)
+			       (b2-combinator storage #'get-card #'get-card #'zero-card))))))
 
 ;;; doesn't work, has to be rewritten - ?
 ;(defun infinite-attack (storage i j n)

@@ -21,7 +21,7 @@
 	*player2* (make-player)
 	*current-attack-queue* nil
 	*current-kill-queue* nil
-	*init-power* 1000
+	*init-power* 2000
 	*current-kill-state* :init)
   t)
 
