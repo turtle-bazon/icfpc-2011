@@ -94,8 +94,8 @@
 			 (+ (opp-vitality (- 255 j))
 			    (floor (* n 9/10)))))))
 	  (when (nth-value 1 (opp-vitality (- 255 j)))
-	    (when (minusp (decf (opp-vitality (- 255 j)) (floor (* n 9/10))))
-	      (setf (opp-vitality (- 255 j)) 0))))
+	    (let ((new (- (opp-vitality (- 255 j)) (floor (* n 9/10)))))
+	      (setf (opp-vitality (- 255 j)) (max new 0)))))
       #'i-card)))
 
 (defun help-card (i)
