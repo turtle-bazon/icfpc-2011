@@ -108,6 +108,16 @@
 	  (write-number 0 slot-y)
 	  (b2-combinator 1 #'get-card #'get-card #'zero-card)))
 
+(defun double-action-without-value (storage slot-x)
+  "as double-action, only without last argument"
+  (unless (/= storage 0) (normal-error))
+  (unless (/= storage 1) (normal-error))
+  (append (write-put 1)
+	  `((:right ,#'s-card    1))
+	  (write-number 0 slot-x)
+	  (b2-combinator 1 #'get-card #'get-card #'zero-card)
+	  (b2-combinator 1 #'get-card #'get-card #'zero-card)))
+
 (defun attack-without-value (storage i j)
   "attack i j"
   (unless (/= storage 0) (normal-error))
@@ -122,6 +132,13 @@
   "s0, s1, s2 -- temporary storages, other parameters as in attack"
   (append (attack-without-value s1 i j)
 	  (write-number s2 n nil)
+	  (double-action s0 s1 s2)))
+
+(defun quadro-attack (s0 s1 s2 i j n)
+  "as in double-attack"
+  (append (attack-without-value s1 i j)
+	  (double-action-without-value s0 s1)
+	  (write-number s2 n)
 	  (double-action s0 s1 s2)))
 
 (defun attack-queue-2nd-slot (storage i n)
