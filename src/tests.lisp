@@ -262,6 +262,28 @@
 			90))))
 
 (lift:addtest
+    test-attack-card-auto
+  (let ((*auto-apply-flag* t))
+    (let ((i (random 255))
+	  (j (random 255)))
+      (let* ((j-fun (attack-card i))
+	     (n-fun (funcall j-fun j)))
+	(setf (my-vitality i) 89)
+	(setf (opp-vitality (- 255 j)) 99)
+	(lift:ensure-same (funcall n-fun 10) #'i-card)
+	(lift:ensure-same (my-vitality i)
+			  79)
+	(lift:ensure-same (opp-vitality (- 255 j))
+			  108)
+	(setf (my-vitality i) 89)
+	(setf (opp-vitality (- 255 j)) 65530)
+	(lift:ensure-same (funcall n-fun 10) #'i-card)
+	(lift:ensure-same (my-vitality i)
+			  79)
+	(lift:ensure-same (opp-vitality (- 255 j))
+			  65535)))))
+
+(lift:addtest
     test-attack-card-2
   (let* ((i -1)
 	 (j (random 255))
@@ -283,7 +305,10 @@
 	 (j -1)
 	 (j-fun (attack-card i))
 	 (n-fun (funcall j-fun j)))
-    (lift:ensure-condition normal-error (funcall n-fun (random 255)))))
+    (setf (my-vitality i) 100)
+    (lift:ensure-condition normal-error (funcall n-fun 10))
+    (lift:ensure-same (my-vitality i)
+		      90)))
 
 (lift:addtest
     test-attack-card-5
@@ -291,7 +316,10 @@
 	 (j 256)
 	 (j-fun (attack-card i))
 	 (n-fun (funcall j-fun j)))
-    (lift:ensure-condition normal-error (funcall n-fun (random 255)))))
+    (setf (my-vitality i) 100)
+    (lift:ensure-condition normal-error (funcall n-fun 10))
+    (lift:ensure-same (my-vitality i)
+		      90)))
 
 (lift:addtest
     test-attack-card-6
@@ -374,7 +402,10 @@
 	 (j -1)
 	 (j-fun (help-card i))
 	 (n-fun (funcall j-fun j)))
-    (lift:ensure-condition normal-error (funcall n-fun (random 255)))))
+    (setf (my-vitality i) 100)
+    (lift:ensure-condition normal-error (funcall n-fun 10))
+    (lift:ensure-same (my-vitality i)
+		      90)))
 
 (lift:addtest
     test-help-card-4
@@ -382,7 +413,10 @@
 	 (j 256)
 	 (j-fun (help-card i))
 	 (n-fun (funcall j-fun j)))
-    (lift:ensure-condition normal-error (funcall n-fun (random 255)))))
+    (setf (my-vitality i) 100)
+    (lift:ensure-condition normal-error (funcall n-fun 10))
+    (lift:ensure-same (my-vitality i)
+		      90)))
 
 (lift:addtest
     test-help-card-5
@@ -397,6 +431,28 @@
 			101)
       (lift:ensure-same (my-vitality j)
 			210))))
+
+(lift:addtest
+    test-help-card-auto
+  (let ((*auto-apply-flag* t))
+    (let ((i (random 255))
+	  (j (random 255)))
+      (let* ((j-fun (help-card i))
+	     (n-fun (funcall j-fun j)))
+	(setf (my-vitality i) 200)
+	(setf (my-vitality j) 102)
+	(lift:ensure-same (funcall n-fun 99) #'i-card)
+	(lift:ensure-same (my-vitality i)
+			  101)
+	(lift:ensure-same (my-vitality j)
+			  0)
+	(setf (my-vitality i) 200)
+	(setf (my-vitality j) 110)
+	(lift:ensure-same (funcall n-fun 99) #'i-card)
+	(lift:ensure-same (my-vitality i)
+			  101)
+	(lift:ensure-same (my-vitality j)
+			  2)))))
 
 (lift:addtest
     test-help-card-6
