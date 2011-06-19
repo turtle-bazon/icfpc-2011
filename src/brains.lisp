@@ -1,6 +1,7 @@
 (in-package :icfpc)
 
 (defun make-move (opp-move)
+  (setf *move-count* 0)
   (funcall #'make-move-1 opp-move))
 
 (defun dumb-move ()
@@ -15,7 +16,7 @@
 (defparameter *current-kill-queue* nil)
 (defparameter *prev-kill-state* nil)
 (defparameter *current-protect-queue* nil)
-(defparameter *init-power* 1024)
+(defparameter *init-power* 4096)
 (defparameter *current-kill-state* :init)
 
 (defun imitate-restart ()
@@ -25,7 +26,7 @@
 	*current-kill-queue* nil
 	*prev-kill-state* nil
 	*current-protect-queue* nil
-	*init-power* 1024
+	*init-power* 4096
 	*current-kill-state* :init)
   t)
 

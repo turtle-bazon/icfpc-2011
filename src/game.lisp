@@ -19,7 +19,9 @@
 
 (defparameter *player1* (make-player))
 (defparameter *player2* (make-player))
-(defparameter *call-count* 0)
+(defparameter *auto-count* 0)
+(defparameter *move-count* 0)
+(defparameter *game-count* 0)
 (defparameter *auto-apply-flag* nil)
 
 (defun %get-field (slot-no player)
@@ -65,8 +67,14 @@
        (functionp card)))
 
 (defun card-call (card-fun arg)
-  (unless (eq card-fun #'zero-card) (incf *call-count*))
-  (unless (> 1000 *call-count*) (normal-error))
+  (unless (eq card-fun #'zero-card)
+    (when *auto-apply-flag* (incf *auto-count*))
+    (incf *move-count*)
+    (incf *game-count*))
+  (unless (or (and *auto-apply-flag* (> 1000 *auto-count*))
+	      (> 10000 *move-count*)
+	      (> 100000 *game-count*))
+    (normal-error))
   (unless (functionp card-fun) (normal-error))
   (if (eq card-fun #'zero-card)
       0

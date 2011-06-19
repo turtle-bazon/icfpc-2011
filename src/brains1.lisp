@@ -108,8 +108,9 @@
 (defun double-action-without-value (storage slot-x)
   "as double-action, only without last argument"
   (unless (/= storage 0) (normal-error))
-  (append (write-put storage)
-	  `((:right ,#'s-card   ,storage))
+  (append ;(write-put storage)
+	  `((:left ,#'put-card ,storage)
+	    (:right ,#'s-card   ,storage))
 	  (write-number 0 slot-x)
 	  (b2-combinator storage #'get-card #'get-card #'zero-card)
 	  (b2-combinator storage #'get-card #'get-card #'zero-card)))
@@ -209,15 +210,16 @@
 (defun multiple-heal (k slot-i)
   "k times healing using doubling and inc; uses slots 3 - 5+k"
   (append (write-number 3 slot-i)
-	  (write-put 4)
-	  `((:right ,#'inc-card 4))
+	  ;(write-put 4)
+	  `((:left ,#'put-card 4)
+	    (:right ,#'inc-card 4))
 	  (loop for i from 4 to (+ 4 k)
 	     append (double-action-without-value (+ i 1) i))
 	  (double-action (+ k 6) (+ k 5) 3)))
 
 (defun multiple-inc-slot (slot-i)
   "Multiple healing; only 330 applied"
-  (multiple-heal 7 slot-i))
+  (multiple-heal 11 slot-i))
 
 ;;; doesn't work, has to be rewritten - ?
 ;(defun infinite-attack (storage i j n)
