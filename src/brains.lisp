@@ -49,6 +49,7 @@
 							       (< (slot-vitality s) *init-power*)))
 					    (subseq (player-slots *player1*) 4)))))
 		 ; (print `(+1000 to ,s1 vitality) *error-output*)
+		  (setf *init-power* 4096)
 		  (multiple-heal 11 s1))))))
   (let ((move (car *current-attack-queue*)))
     (setf *current-attack-queue*
