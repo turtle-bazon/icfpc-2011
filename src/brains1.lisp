@@ -206,6 +206,19 @@
 	  (write-number s2 n nil)
 	  (infinite-action s0 s1 s2)))
 
+(defun multiple-heal (k slot-i)
+  "k times healing using doubling and inc; uses slots 3 - 5+k"
+  (append (write-number 3 slot-i)
+	  (write-put 4)
+	  `((:right ,#'inc-card 4))
+	  (loop for i from 4 to (+ 4 k)
+	     append (double-action-without-value (+ i 1) i))
+	  (double-action (+ k 6) (+ k 5) 3)))
+
+(defun multiple-inc-slot (slot-i)
+  "Multiple healing; only 330 applied"
+  (multiple-heal 11 slot-i))
+
 ;;; doesn't work, has to be rewritten - ?
 ;(defun infinite-attack (storage i j n)
 ;  "Y (attack i j n)"
