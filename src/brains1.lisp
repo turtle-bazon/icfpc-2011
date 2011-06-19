@@ -101,25 +101,18 @@
    double-action do (x y) twice:
    F x y = x y (x y) = S x x y"
   (unless (/= storage 0) (normal-error))
-  (unless (/= storage 1) (normal-error))
-  (append ;(write-put 1)
-	  `((:left ,#'put-card 1)
-	    (:right ,#'s-card    1))
-	  (write-number 0 slot-x)
-	  (b2-combinator 1 #'get-card #'get-card #'zero-card)
-	  (b2-combinator 1 #'get-card #'get-card #'zero-card)
+  (append (double-action-without-value storage slot-x)
 	  (write-number 0 slot-y)
-	  (b2-combinator 1 #'get-card #'get-card #'zero-card)))
+	  (b2-combinator storage #'get-card #'get-card #'zero-card)))
 
 (defun double-action-without-value (storage slot-x)
   "as double-action, only without last argument"
   (unless (/= storage 0) (normal-error))
-  (unless (/= storage 1) (normal-error))
-  (append (write-put 1)
-	  `((:right ,#'s-card    1))
+  (append (write-put storage)
+	  `((:right ,#'s-card   ,storage))
 	  (write-number 0 slot-x)
-	  (b2-combinator 1 #'get-card #'get-card #'zero-card)
-	  (b2-combinator 1 #'get-card #'get-card #'zero-card)))
+	  (b2-combinator storage #'get-card #'get-card #'zero-card)
+	  (b2-combinator storage #'get-card #'get-card #'zero-card)))
 
 (defun attack-without-value (storage i j)
   "attack i j"
@@ -138,11 +131,11 @@
 	  (write-number s2 n nil)
 	  (double-action s0 s1 s2)))
 
-(defun quadro-attack (s0 s1 s2 i j n)
+(defun quadro-attack (s0 s1 s2 s3 i j n)
   "as in double-attack"
-  (append (attack-without-value s1 i j)
-	  (double-action-without-value s0 s1)
-	  (write-number s2 n)
+  (append (attack-without-value s3 i j)
+	  (double-action-without-value s1 s3)
+	  (write-number s2 n nil)
 	  (double-action s0 s1 s2)))
 
 (defun attack-queue-2nd-slot (storage i n)
