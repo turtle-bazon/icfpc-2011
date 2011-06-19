@@ -33,7 +33,7 @@
     (:left  ,#'s-card   ,storage)
     (:right ,b          ,storage)
     (:left  ,#'k-card   ,storage)
-    (:right ,#'s-card   ,storage)
+    (:left  ,#'s-card   ,storage)
     (:right ,c          ,storage)
     (:right ,d          ,storage)))
 
