@@ -172,10 +172,7 @@
 	  (write-number 0 slot-f)
 	  (b2-combinator 2 #'get-card #'get-card #'zero-card)  ; 2 -> Sf
 	  (b2-combinator 2 #'get-card #'succ-card #'zero-card) ; 2 -> Sf(K(SII))
-	  (write-put 1)
-	  `((:left  ,#'s-card 1)
-	    (:left  ,#'k-card 1)	 ; 1 -> k(SI)
-	    (:right ,#'s-card ,storage)) ; s -> S
+	  `((:right ,#'s-card ,storage)) ; s -> S
 	  (b2-combinator storage #'get-card #'succ-card #'zero-card)
 	  (write-number 0 2)
 	  (b2-combinator storage #'get-card #'get-card #'zero-card)
