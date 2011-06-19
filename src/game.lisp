@@ -65,7 +65,7 @@
        (functionp card)))
 
 (defun card-call (card-fun arg)
-  (incf *call-count*)
+  (unless (eq card-fun #'zero-card) (incf *call-count*))
   (unless (> 1000 *call-count*) (normal-error))
   (unless (functionp card-fun) (normal-error))
   (if (eq card-fun #'zero-card)
