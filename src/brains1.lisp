@@ -155,6 +155,37 @@
 	    (otherwise (append (write-number 0 i)
 			       (b2-combinator storage #'get-card #'get-card #'zero-card))))))
 
+(defun infinite-action (storage slot-f slot-x)
+  "Y f x = f x (Y f x);
+   Y = SII(xy(SII)) = S(K(SI))(Sf(K(SII)))x"
+  (unless (/= 0 storage) (normal-error))
+  (unless (/= 1 storage) (normal-error))
+  (unless (/= 2 storage) (normal-error))
+  (append (write-put 0)
+	  (write-put 1)
+	  (write-put 2)
+	  (write-put storage)
+	  `((:left  ,#'s-card 1)
+	    (:right ,#'i-card 1)	; 1 -> SII
+	    (:left  ,#'k-card 1)	; 1 -> K(SII)
+	    (:right ,#'s-card 2))	; 2 -> S
+	  (write-number 0 slot-f)
+	  (b2-combinator 2 #'get-card #'get-card #'zero-card)  ; 2 -> Sf
+	  (b2-combinator 2 #'get-card #'succ-card #'zero-card) ; 2 -> Sf(K(SII))
+	  (write-put 1)
+	  `((:left  ,#'s-card 1)
+	    (:left  ,#'k-card 1)	 ; 1 -> k(SI)
+	    (:right ,#'s-card ,storage)) ; s -> S
+	  (b2-combinator storage #'get-card #'succ-card #'zero-card)
+	  (write-number 0 2)
+	  (b2-combinator storage #'get-card #'get-card #'zero-card)))
+
+(defun infinite-attack (s0 s1 s2 i j n)
+  "s0, s1, s2 -- temporary storages, other parameters as in attack"
+  (append (attack-without-value s1 i j)
+	  (write-number s2 n nil)
+	  (infinite-action s0 s1 s2)))
+
 ;;; doesn't work, has to be rewritten - ?
 ;(defun infinite-attack (storage i j n)
 ;  "Y (attack i j n)"
