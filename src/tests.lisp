@@ -10,11 +10,11 @@
     (lift:ensure-same (i-card value)
 		      value)))
 
-(lift:addtest
+#|(lift:addtest
     test-zero-card
   (let ((value (random 65535)))
     (lift:ensure-same (zero-card value)
-		      0)))
+		      0)))|#
 
 (lift:addtest
     test-succ-card-1

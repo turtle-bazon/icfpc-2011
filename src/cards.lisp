@@ -39,7 +39,9 @@
     (lambda (x)
       (let ((h (card-call f x))
 	    (y (card-call g x)))
-	(card-call h y))))) ;; also check 'z' to be a function?
+	(let ((z (card-call h y)))
+	  (unless (functionp z) (normal-error))
+	  z)))))
 
 (defun k-card (x)
   "K-комбинатор"
