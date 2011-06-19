@@ -37,14 +37,18 @@
   (if (nth-value 1 (opp-vitality (- 255 (my-field 2))))
       0 1))
 
+;(defun cure-optimal-aim ()
+;  (mapcar #'(lambda (x) (and (alive-p x) (< x  (loop for i from 4 to 255 collect i)
+
 (defun perform-attack ()
   (unless *current-attack-queue*
     (setf *current-attack-queue*
 	  (let ((s (attack-optimal-source *init-power*)))
 	    (if s (attack-queue-1st-2nd-slot 3 s)
-		(let ((s1 (position-if #'(lambda (s) (and (plusp (slot-vitality s))
-							  (< (slot-vitality s) *init-power*)))
-				       (subseq (player-slots *player1*) 4))))
+		(let ((s1 (+ 4 (position-if #'(lambda (s) (and (plusp (slot-vitality s))
+							       (< (slot-vitality s) *init-power*)))
+					    (subseq (player-slots *player1*) 4)))))
+		 ; (print `(+1000 to ,s1 vitality) *error-output*)
 		  (multiple-heal 11 s1))))))
   (let ((move (car *current-attack-queue*)))
     (setf *current-attack-queue*
