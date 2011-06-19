@@ -120,6 +120,17 @@
 	  (write-number s2 n nil) 
 	  (double-action s0 s1 s2)))
 
+(defun attack-queue-2nd-slot (storage i n)
+  "attack; j=my[2]"
+  (append `((:left  ,#'put-card    ,storage)
+	    (:right ,#'attack-card ,storage))
+	  (write-number 0 i)
+	  (b-combinator storage #'get-card #'zero-card)
+	  (write-number 0 2)
+	  (b2-combinator storage #'get-card #'get-card #'zero-card)
+	  (write-number 0 n nil)
+	  (b-combinator storage #'get-card #'zero-card)))
+
 ;;; doesn't work, has to be rewritten - ?
 ;(defun infinite-attack (storage i j n)
 ;  "Y (attack i j n)"
