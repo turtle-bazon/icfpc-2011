@@ -28,18 +28,20 @@
 (defun attack-optimal-source (min-power)
   (+ (position-if #'(lambda (s) (> (slot-vitality s) min-power)) (subseq (player-slots *player1*) 4)) 4))
 
+(defun attack-optimal-delta ()
+  (if (nth-value 1 (opp-vitality (- 255 (my-field 2))))
+      0 1))
+
 (defun perform-attack ()
   (unless *current-attack-queue*
     (setf *current-attack-queue*
-	  (attack-queue-1st-2nd-slot 3 (attack-optimal-source *init-power*)))
-    (print `(:perform (:command (attack-queue-1st-2nd-slot 3 ,(attack-optimal-source *init-power*)))
-		      (:my-1 ,(my-field 1)) (:my-2 ,(my-field 2)))
-	   *error-output*))
+	  (attack-queue-1st-2nd-slot 3 (attack-optimal-source *init-power*))))
   (let ((move (car *current-attack-queue*)))
     (setf *current-attack-queue*
 	  (let ((res (apply #'imitate-my-move move)))
 	    (if (eq res :error)
-		(progn (print `(:error ,move) *error-output*) nil)
+		(progn ;(print `(:error ,move) *error-output*)
+		       nil)
 		(cdr *current-attack-queue*))))
     (values move (null *current-attack-queue*))))
 
@@ -47,19 +49,20 @@
   (unless *current-kill-queue*
     (setf *current-kill-queue*
 	  (append (write-number 1 *init-power*)
-		  (write-number 2 (opp-least-alive)))))
+		  (write-number 2 0))))
   (let ((move (car *current-kill-queue*)))
     (setf *current-kill-queue*
 	  (let ((res (apply #'imitate-my-move move)))
 	    (if (eq res :error)
-		(progn (print `(:error ,move) *error-output*) nil)
+		(progn ;(print `(:error ,move) *error-output*)
+		       nil)
 		(cdr *current-kill-queue*))))
     (values move (null *current-kill-queue*))))
 
 (defun next-attack-params ()
   (unless *current-kill-queue*
     (setf *current-kill-queue*
-	  (append (loop repeat (- (opp-least-alive) (my-field 2))
+	  (append (loop repeat (attack-optimal-delta)
 			collect `(:left ,#'succ-card 2)))))
   (if *current-kill-queue*
       (let ((move (car *current-kill-queue*)))
@@ -77,13 +80,13 @@
 	   (prepare-kill-slot)
 	 (when finish (setf *current-kill-state* :attack))
 	 move))
-    (:attack (print :attack *error-output*)
+    (:attack
        (multiple-value-bind (move finish)
 	   (perform-attack)
 	 (when finish
 	   (setf *current-kill-state* :next))
 	 move))
-    (:next (print :next *error-output*)
+    (:next
        (multiple-value-bind (move finish)
 	   (next-attack-params)
 	 (when finish
