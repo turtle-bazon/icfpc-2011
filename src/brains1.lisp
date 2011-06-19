@@ -178,6 +178,8 @@
 	    (:right ,#'s-card ,storage)) ; s -> S
 	  (b2-combinator storage #'get-card #'succ-card #'zero-card)
 	  (write-number 0 2)
+	  (b2-combinator storage #'get-card #'get-card #'zero-card)
+	  (write-number 0 slot-x)
 	  (b2-combinator storage #'get-card #'get-card #'zero-card)))
 
 (defun infinite-attack (s0 s1 s2 i j n)
