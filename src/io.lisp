@@ -59,7 +59,6 @@
 
       (let ((my-move (make-move prev-opp-move)))
 	(auto-my-apply)
-	(apply #'imitate-my-move my-move) ; think of a rollback here
 	(write-my-move my-move))
       (auto-opp-apply)
       (apply #'imitate-opp-move (setf prev-opp-move (read-opp-move))))

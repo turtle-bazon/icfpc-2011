@@ -16,6 +16,8 @@
 	       (:file "cards")
 	       (:file "game")
 	       (:file "io")
+	       (:file "brains1")
+	       (:file "brains-utils")
 	       (:file "brains"))
   :in-order-to ((test-op (test-op icfpc-tests)))
   :perform (test-op :after (op c)

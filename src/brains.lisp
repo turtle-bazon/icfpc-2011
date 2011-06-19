@@ -10,74 +10,38 @@
   (declare (ignore opp-move))
   (dumb-move))|#
 
-(defun %most-alive (player)
-  (let ((max-val -2)
-	(max-id -1))
-    (dotimes (i 256)
-      (multiple-value-bind (v p)
-	  (%get-vitality i player)
-	(when (and p (> v max-val))
-	  (setf max-val v
-		max-id i))))
-    (values max-id max-val)))
+(defparameter *current-attack-queue* nil)
 
-(defun %least-alive (player)
-  (let ((min-val most-positive-fixnum)
-	(min-id -1))
-    (dotimes (i 256)
-      (multiple-value-bind (v p)
-	  (%get-vitality i player)
-	(when (and p (> v min-val))
-	  (setf min-val v
-		min-id i))))
-    (values min-id min-val)))
 
-(defun my-most-alive () (%most-alive *player1*))
-(defun opp-most-alive () (%most-alive *player2*))
-(defun my-least-alive () (%least-alive *player1*))
-(defun opp-least-alive () (%least-alive *player2*))
+(defun imitate-restart ()
+  (setf *player1* (make-player)
+	*player2* (make-player)
+	*current-attack-queue* nil)
+  t)
 
-;; lazy eval
-
-(defstruct promise
-  (expr (lambda () NIL) :type function)
-  (done nil :type boolean)
-  (value nil))
-
-(defmacro delay (form)
-  `(make-promise
-    :expr (lambda () ,form)))
-
-(defun do-promise (promise)
-  (with-slots (expr done value) promise
-    (setf value (multiple-value-list (funcall expr)))
-    (setf done t)
-    (apply #'values value)))
-
-(defun force (promise)
-  (cond ((not (eq (type-of promise) 'promise)) promise)
-        ((promise-done promise) (apply #'values (promise-value promise)))
-        (t (do-promise promise))))
-
-;; queues
-
-(defun make-attack-queue (my-fn opp-fn source-fn)
-  (let ((my     (delay (funcall my-fn)))
-	(opp    (delay (funcall opp-fn)))
-	(source (delay (funcall source-fn))))
-    `((:left  #'attack-card ,my)
-      (:right ,opp          ,my)
-      (:right ,source       ,my))))
-
-(defun shift-queue (queue)
-  (values (mapcar #'force (car queue))
-	  (cdr queue)))
-
+(defun attack-optimal-source ()
+  (position-if #'(lambda (s) (plusp (slot-vitality s))) (player-slots *player1*)))
 
 (defun make-move-1 (opp-move)
   (declare (ignore opp-move))
-  (let ((aim (opp-least-alive)))
-    (print aim *error-output*)
-    (if (typep aim 'slot-no)
-	(list :left #'attack-card aim)
-	(dumb-move))))
+  (unless *current-attack-queue*
+    (let* ((opp (opp-least-alive))
+	   (my  (attack-optimal-source))
+	   (stor 1))
+      (setf *current-attack-queue*
+	    (append (attack-queue stor my (- 255 opp)
+				  (* 0.5 (min (my-vitality my)
+					      (opp-vitality opp))))
+		    (list my opp)))))
+
+  (let ((move (car *current-attack-queue*)))
+    (setf *current-attack-queue*
+	  (unless (eq (apply #'imitate-my-move move) :error)
+	    (cdr *current-attack-queue*)))
+    (when (integerp (car *current-attack-queue*))
+      (let ((my (first *current-attack-queue*))
+	    (opp (second *current-attack-queue*)))
+	(format *error-output* "My: vit(~A)=~A; Opp: vit(~A)=~A~%"
+		my (my-vitality my) opp (opp-vitality opp)))
+      (setf *current-attack-queue* nil))
+    move))
