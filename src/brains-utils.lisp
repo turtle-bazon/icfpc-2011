@@ -27,6 +27,11 @@
 (defun my-least-alive () (%least-alive *player1*))
 (defun opp-least-alive () (%least-alive *player2*))
 
+(defun find-zombies-at-my-slots ()
+  (loop for i from 0 to 255
+	when (= (my-vitality i) -1)
+	  collect i))
+
 ;; lazy eval
 
 (defstruct promise
