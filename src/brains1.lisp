@@ -217,7 +217,7 @@
 
 (defun multiple-inc-slot (slot-i)
   "Multiple healing; only 330 applied"
-  (multiple-heal 11 slot-i))
+  (multiple-heal 7 slot-i))
 
 ;;; doesn't work, has to be rewritten - ?
 ;(defun infinite-attack (storage i j n)
